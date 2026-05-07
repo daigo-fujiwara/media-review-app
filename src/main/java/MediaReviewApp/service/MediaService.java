@@ -32,11 +32,6 @@ public class MediaService {
         return mediaRepository.findById(id).orElse(null);
     }
 
-    // 削除
-    public void delete(Long id) {
-        mediaRepository.deleteById(id);
-    }
-
     // MediaService.java に追加
     public void updateStatus(Long id, String status) {
         Media media = findById(id);
@@ -44,5 +39,10 @@ public class MediaService {
             media.setStatus(status);
             mediaRepository.save(media);
         }
+    }
+
+    // 削除
+    public void delete(Long id) {
+        mediaRepository.deleteById(id);
     }
 }
