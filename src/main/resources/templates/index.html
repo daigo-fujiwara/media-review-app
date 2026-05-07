@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>Media Review App</title>
@@ -20,15 +20,20 @@
         <h5>新規登録 / レビュー投稿</h5>
         <form th:action="@{/save}" method="post" class="row g-2">
             <div class="col-md-4">
-                <input type="text" name="title" class="form-control" placeholder="タイトル" required>
+                <label>
+                    <input type="text" name="title" class="form-control" placeholder="タイトル" required>
+                </label>
             </div>
             <div class="col-md-3">
-                <select name="type" class="form-select">
-                    <option value="BOOK">本</option>
-                    <option value="MOVIE">映画</option>
-                </select>
+                <label>
+                    <select name="type" class="form-select">
+                        <option value="BOOK">本</option>
+                        <option value="MOVIE">映画</option>
+                    </select>
+                </label>
             </div>
             <div class="col-md-3">
+                <label for="statusSelect"></label>
                 <select name="status" id="statusSelect" class="form-select">
                     <option value="WANT">WANT (観たい)</option>
                     <option value="DONE">DONE (観た)</option>
@@ -38,17 +43,21 @@
             <div id="reviewFields" class="col-md-12">
                 <div class="row g-2 mt-1">
                     <div class="col-md-2">
-                        <select name="rating" class="form-select">
-                            <option value="0">評価なし</option>
-                            <option value="5">★★★★★</option>
-                            <option value="4">★★★★</option>
-                            <option value="3">★★★</option>
-                            <option value="2">★★</option>
-                            <option value="1">★</option>
-                        </select>
+                        <label>
+                            <select name="rating" class="form-select">
+                                <option value="0">評価なし</option>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★</option>
+                                <option value="3">★★★</option>
+                                <option value="2">★★</option>
+                                <option value="1">★</option>
+                            </select>
+                        </label>
                     </div>
                     <div class="col-md-10">
-                        <textarea name="comment" class="form-control" placeholder="レビューを書く" rows="2"></textarea>
+                        <label>
+                            <textarea name="comment" class="form-control" placeholder="レビューを書く" rows="2"></textarea>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -98,17 +107,21 @@
 
                                     <div class="mb-3">
                                         <label class="form-label">評価</label>
-                                        <select name="rating" class="form-select">
-                                            <option value="5">★★★★★</option>
-                                            <option value="4">★★★★</option>
-                                            <option value="3" selected>★★★</option>
-                                            <option value="2">★★</option>
-                                            <option value="1">★</option>
-                                        </select>
+                                        <label>
+                                            <select name="rating" class="form-select">
+                                                <option value="5">★★★★★</option>
+                                                <option value="4">★★★★</option>
+                                                <option value="3" selected>★★★</option>
+                                                <option value="2">★★</option>
+                                                <option value="1">★</option>
+                                            </select>
+                                        </label>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">感想</label>
-                                        <textarea name="comment" class="form-control" rows="3" placeholder="おもしろかった！"></textarea>
+                                        <label>
+                                            <textarea name="comment" class="form-control" rows="3" placeholder="おもしろかった！"></textarea>
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
