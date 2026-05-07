@@ -23,17 +23,11 @@ public class MediaController {
         return "index"; // index.htmlを表示
     }
 
-    // 保存処理
+    // 登録処理
     @PostMapping("/save")
     public String save(Media media) {
         mediaService.save(media);
-        return "redirect:/"; // 保存が終わったらトップ画面に戻る
-    }
-
-    // 削除
-    @PostMapping("/delete")
-    public String delete(Long id) {
-        mediaService.delete(id);
+        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求
         return "redirect:/";
     }
 
@@ -41,6 +35,13 @@ public class MediaController {
     @PostMapping("/update-status")
     public String updateStatus(Long id, String status) {
         mediaService.updateStatus(id, status);
+        return "redirect:/";
+    }
+
+    // 削除
+    @PostMapping("/delete")
+    public String delete(Long id) {
+        mediaService.delete(id);
         return "redirect:/";
     }
 }
