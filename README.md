@@ -4,8 +4,19 @@
 
 ## 開発工程
 1. 要件定義
-2. Spring Initializrによるプロジェクト作成
-3. 
+2. 環境構築
+   - Spring Initializrによるプロジェクト作成
+   - GitHubとの連携
+3. データモデル設計
+   - Entityの作成
+4. データ操作の実装
+   - MediaRepository の作成
+5. ビジネスロジックの実装
+   - MediaService の作成
+6. 窓口と画面の実装
+   - MediaController
+   - HTML/Thymeleaf
+   - ブラッシュアップ
 
 ## 主な機能
 - **WANTリスト**: 観たい映画や読みたい本を登録。
