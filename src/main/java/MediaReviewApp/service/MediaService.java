@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-// コンストラクタを自分で書く必要がなくなります
+// コンストラクタを自分で書く必要がなくなる
 @RequiredArgsConstructor
 public class MediaService {
 
