@@ -2,19 +2,17 @@ package MediaReviewApp.service;
 
 import MediaReviewApp.entity.Media;
 import MediaReviewApp.repository.MediaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class MediaService {
 
-    @Autowired
-    private MediaRepository mediaRepository;
+    private final MediaRepository mediaRepository;
 
-    // 全件取得
-    public List<Media> findAll() {
-        return mediaRepository.findAll();
+    // コンストラクタで注入
+    public MediaService(MediaRepository mediaRepository) {
+        this.mediaRepository = mediaRepository;
     }
 
     // ステータス（WANT/DONE）ごとに取得
