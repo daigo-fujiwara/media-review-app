@@ -2,18 +2,16 @@ package MediaReviewApp.service;
 
 import MediaReviewApp.entity.Media;
 import MediaReviewApp.repository.MediaRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+// コンストラクタを自分で書く必要がなくなります
+@RequiredArgsConstructor
 public class MediaService {
 
     private final MediaRepository mediaRepository;
-
-    // コンストラクタで注入
-    public MediaService(MediaRepository mediaRepository) {
-        this.mediaRepository = mediaRepository;
-    }
 
     // ステータス（WANT/DONE）ごとに取得
     public List<Media> findByStatus(String status) {
