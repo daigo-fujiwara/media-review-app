@@ -2,7 +2,6 @@ package MediaReviewApp.controller;
 
 import MediaReviewApp.entity.Media;
 import MediaReviewApp.service.MediaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class MediaController {
 
-    @Autowired
-    private MediaService mediaService;
+    private final MediaService mediaService; // finalにして変更不可にする
+
+    // コンストラクタで受け取る
+    public MediaController(MediaService mediaService) {
+        this.mediaService = mediaService;
+    }
 
     // メイン画面（一覧表示）
     @GetMapping("/")
