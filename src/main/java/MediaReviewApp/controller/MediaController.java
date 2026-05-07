@@ -20,8 +20,9 @@ public class MediaController {
     // メイン画面（一覧表示）
     @GetMapping("/")
     public String index(Model model) {
-        // WANT（観たい）とDONE（観た）のリストをそれぞれ取得して画面に渡す
+        // DBからStatusが "WANT" の作品を全部取ってきてリストに "wantList" というラベルを貼って箱に詰める
         model.addAttribute("wantList", mediaService.findByStatus("WANT"));
+        // DBからStatusが "DONE" の作品を全部取ってきてリストに "doneList" というラベルを貼って箱に詰める
         model.addAttribute("doneList", mediaService.findByStatus("DONE"));
         return "index"; // index.htmlを表示
     }
@@ -30,7 +31,7 @@ public class MediaController {
     @PostMapping("/save")
     public String save(Media media) {
         mediaService.save(media);
-        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求
+        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
         return "redirect:/";
     }
 
