@@ -18,8 +18,10 @@
 
     <div class="card p-3 mb-4">
         <h5>新規登録 / レビュー投稿</h5>
-        <form th:action="@{/save}" method="post" class="row g-2 align-items-end"> <div class="col-md-4">
-            <label for="titleInput" class="form-label d-none">タイトル</label> <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトル" required>
+        <form th:action="@{/save}" method="post" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label for="titleInput" class="form-label d-none">タイトル</label>
+                <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトル" required>
         </div>
 
             <div class="col-md-3">
@@ -45,21 +47,19 @@
             <div id="reviewFields" class="col-md-12 mt-2">
                 <div class="row g-2">
                     <div class="col-md-2">
-                        <label>
-                            <select name="rating" class="form-select">
-                                <option value="0">評価なし</option>
-                                <option value="5">★★★★★</option>
-                                <option value="4">★★★★</option>
-                                <option value="3">★★★</option>
-                                <option value="2">★★</option>
-                                <option value="1">★</option>
-                            </select>
-                        </label>
+                        <label for="ratingInput" class="form-label d-none">評価</label>
+                        <select id="ratingInput" name="rating" class="form-select">
+                            <option value="0">評価なし</option>
+                            <option value="5">★★★★★</option>
+                            <option value="4">★★★★</option>
+                            <option value="3">★★★</option>
+                            <option value="2">★★</option>
+                            <option value="1">★</option>
+                        </select>
                     </div>
                     <div class="col-md-10">
-                        <label>
-                            <textarea name="comment" class="form-control" placeholder="レビューを書く" rows="2"></textarea>
-                        </label>
+                        <label for="commentInput" class="form-label d-none">レビュー</label>
+                        <textarea id="commentInput" name="comment" class="form-control" placeholder="レビューを書く" rows="2"></textarea>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,9 @@
             <h4 class="text-secondary">WANT (これから)</h4>
             <div th:each="item : ${wantList}" class="card shadow-sm mb-3">
                 <div class="card-body">
-                    <span class="badge bg-info text-dark" th:text="${item.type}">TYPE</span>
+                    <span class="badge"
+                          th:classappend="${item.type == 'MOVIE' ? 'bg-danger' : 'bg-primary'}"
+                          th:text="${item.type}">TYPE</span>
                     <h5 class="card-title mt-2" th:text="${item.title}">Title</h5>
 
                     <div class="mt-3 d-flex gap-2">
@@ -137,7 +139,9 @@
             <h4 class="text-success">DONE (済み)</h4>
             <div th:each="item : ${doneList}" class="card shadow-sm mb-3">
                 <div class="card-body">
-                    <span class="badge bg-success" th:text="${item.type}">TYPE</span>
+                    <span class="badge"
+                          th:classappend="${item.type == 'MOVIE' ? 'bg-danger' : 'bg-primary'}"
+                          th:text="${item.type}">TYPE</span>
                     <h5 class="card-title mt-2" th:text="${item.title}">Title</h5>
                     <p class="text-warning mb-1">
                         <span th:if="${item.rating != null and item.rating > 0}"
