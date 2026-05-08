@@ -17,6 +17,7 @@
    - MediaController
    - HTML/Thymeleaf
    - ブラッシュアップ
+7. Renderでの公開
 
 ## 主な機能
 - **WANTリスト**: 観たい映画や読みたい本を登録。

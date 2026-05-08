@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-// コンストラクタを自分で書く必要がなくなる
-@RequiredArgsConstructor
+@RequiredArgsConstructor // コンストラクタを自分で書く必要がなくなる
 public class MediaController {
 
     private final MediaService mediaService; // finalにして変更不可にする

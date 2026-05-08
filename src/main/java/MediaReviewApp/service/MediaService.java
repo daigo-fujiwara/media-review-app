@@ -7,8 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-// コンストラクタを自分で書く必要がなくなる
-@RequiredArgsConstructor
+@RequiredArgsConstructor // コンストラクタを自分で書く必要がなくなる
 public class MediaService {
 
     private final MediaRepository mediaRepository;
@@ -18,7 +17,7 @@ public class MediaService {
         return mediaRepository.findByStatusOrderByUpdatedAtDesc(status);
     }
 
-    // 保存（新規登録・更新の両方で使います）
+    // 保存（新規登録・更新の両方で使う）
     public void save(Media media) {
         mediaRepository.save(media);
     }
