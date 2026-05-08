@@ -29,3 +29,8 @@
 - Spring Data JPA
 - H2 Database
 - Thymeleaf / Bootstrap 5
+
+## 設定ファイル
+- application.propertiesがRender（クラウド）用
+- application-dev.propertiesがローカルPC用
+- IntelliJで実行するときだけ、dev（自分用）の設定を使うように「実行構成の編集」をする。

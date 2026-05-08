@@ -37,6 +37,7 @@ public class MediaController {
     @PostMapping("/update-status")
     public String updateStatus(Long id, String status) {
         mediaService.updateStatus(id, status);
+        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
         return "redirect:/";
     }
 
@@ -44,6 +45,7 @@ public class MediaController {
     @PostMapping("/delete")
     public String delete(Long id) {
         mediaService.delete(id);
+        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
         return "redirect:/";
     }
 }
