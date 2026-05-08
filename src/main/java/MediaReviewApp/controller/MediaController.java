@@ -28,23 +28,20 @@ public class MediaController {
     @PostMapping("/save")
     public String save(Media media) {
         mediaService.save(media);
-        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
-        return "redirect:/";
+        return "redirect:/"; //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
     }
 
     // ステータス変更（WANT -> DONE など）
     @PostMapping("/update-status")
     public String updateStatus(Long id, String status) {
         mediaService.updateStatus(id, status);
-        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
-        return "redirect:/";
+        return "redirect:/"; //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
     }
 
     // 削除
     @PostMapping("/delete")
     public String delete(Long id) {
         mediaService.delete(id);
-        //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
-        return "redirect:/";
+        return "redirect:/"; //サーバー (Controller)がブラウザに対して"/"にGETリクエストを送り直すよう要求している
     }
 }
