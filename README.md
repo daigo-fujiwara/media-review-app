@@ -25,7 +25,7 @@
 - **クイックレビュー**: WANTリストを経由せず、いきなりレビューを投稿することも可能。
 
 ## 技術スタック
-- Java 17
+- Java 21
 - Spring Boot 3
 - Spring Data JPA
 - H2 Database
@@ -35,3 +35,8 @@
 - application.propertiesがRender（クラウド）用
 - application-dev.propertiesがローカルPC用
 - IntelliJで実行するときだけ、dev（自分用）の設定を使うように「実行構成の編集」をする。
+
+## 作業予定
+- 5/1週 : 環境構築
+- 5/7週 : ひな形の作成
+- 5/11週 : 説明とログイン機能の追加、テストコードの作成
