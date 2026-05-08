@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity // このクラスがデータベースの「テーブル」であることを示している。
-@Data // Lombokというライブラリの機能で各フィールドに対する Getter, Setter メソッドを自動生成する。
+@Data // Lombokというライブラリの機能で各フィールドに対する Getter, Setter メソッドを自動生成する。（getTitle, setTypeなど）
 public class Media {
 
     @Id // 主キーの意味
