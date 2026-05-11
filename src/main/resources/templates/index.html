@@ -22,6 +22,16 @@
 <div class="container mt-4">
     <h1>メディアレビューアプリ</h1>
 
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}">成功しました！</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}">エラーが発生しました。</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
     <div class="card p-3 mb-4">
         <h5>気になるリスト登録 / レビュー登録</h5>
         <form th:action="@{/save}" method="post" class="row g-2 align-items-end">
@@ -105,7 +115,7 @@
                             <form th:action="@{/delete}" method="post">
                                 <input type="hidden" name="id" th:value="${item.id}">
                                 <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Are you sure you want to delete this?')">削除</button>
+                                        onclick="return confirm('本当に削除しますか？')">削除</button>
                             </form>
                         </div>
                     </div>

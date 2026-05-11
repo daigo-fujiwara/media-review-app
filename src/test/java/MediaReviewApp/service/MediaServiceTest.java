@@ -1,10 +1,12 @@
 package MediaReviewApp.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -95,28 +97,33 @@ class MediaServiceTest {
     }
 
     @Test
-    @DisplayName("データが存在しないときは、保存処理が行われないこと")
+    @DisplayName("データが存在しないときは、例外が発生し、保存処理が行われないこと")
     void testUpdateStatus_NotFound() {
         Long targetId = 999L;
-        // 演技指導：見つかりませんでした（Empty）を返す
-        when(mediaRepository.findById(targetId)).thenReturn(java.util.Optional.empty());
+        when(mediaRepository.findById(targetId)).thenReturn(Optional.empty());
 
-        mediaService.updateStatus(targetId, "DONE");
-
-        // 検証：saveは一度も（never）呼ばれていないはず！
+        // 変更点：実行部分をassertThrowsで囲む
+        assertThrows(RuntimeException.class, () -> mediaService.updateStatus(targetId, "DONE"));
         verify(mediaRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("指定したIDで削除を指示できるか")
     void testDelete() {
-        // 1. 準備
         Long targetId = 1L;
 
-        // 2. 実行
+        // 変更点：この1行を追加しないと、Service内のif文で例外に飛ばされる
+        when(mediaRepository.existsById(targetId)).thenReturn(true);
+
         mediaService.delete(targetId);
 
-        // 3. 検証：deleteById(1L) が呼ばれたか？
         verify(mediaRepository, times(1)).deleteById(targetId);
+    }
+
+    @Test
+    @DisplayName("存在しないIDを検索した時にエラーが投げられること")
+    void testFindByIdNotFound() {
+        // 存在しないであろうIDを指定してRuntimeExceptionが投げられることを検証する
+        assertThrows(RuntimeException.class, () -> mediaService.findById(999L));
     }
 }
