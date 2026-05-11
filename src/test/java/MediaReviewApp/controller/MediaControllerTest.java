@@ -16,12 +16,16 @@ class MediaControllerTest {
 
     @BeforeEach
     void setUp() {
-        // 1. Serviceの「身代わり（モック）」をMockitoで作る
+
+        // 1. ServiceのモックをMockitoで作る
         MediaService mediaService = Mockito.mock(MediaService.class);
 
-        // 2. Controllerを自分で「new」して、Serviceの身代わりを渡す
-        // これにより、Springの起動を待たずにテストができます
+        // 2. Controllerをインスタンス化して、Serviceのモックを渡す。
         mediaController = new MediaController(mediaService);
+        /*
+        本番ではSpring Bootがmainメソッドでインスタンス化するが、テストでは自分でnewして
+        インスタンス化する。これにより、Spring Bootの起動を待たずにテストができる。
+         */
     }
 
     @Test
