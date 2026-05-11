@@ -22,6 +22,7 @@
 <div class="container mt-4">
     <h1>メディアレビューアプリ</h1>
 
+    <!--/*@thymesVar id="successMessage" */-->
     <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
         <span th:text="${successMessage}">成功しました！</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -34,7 +35,8 @@
 
     <div class="card p-3 mb-4">
         <h5>気になるリスト登録 / レビュー登録</h5>
-        <form th:action="@{/save}" method="post" class="row g-2 align-items-end">
+        <form th:action="@{/save}" method="post" class="row g-2 align-items-end"
+              onsubmit="this.querySelector('button[type=submit]').disabled=true;">
             <div class="col-md-4">
                 <label for="titleInput" class="form-label d-none">タイトル</label>
                 <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトル" required>
@@ -123,7 +125,8 @@
                     <div class="modal fade" th:id="'reviewModal' + ${item.id}" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form th:action="@{/save}" method="post">
+                                <form th:action="@{/save}" method="post"
+                                      onsubmit="this.querySelector('button[type=submit]').disabled=true;">
                                     <div class="modal-header">
                                         <h5 class="modal-title">"<span th:text="${item.title}"></span>"の評価</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
