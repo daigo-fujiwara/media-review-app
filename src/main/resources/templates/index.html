@@ -24,13 +24,24 @@
             flex-shrink: 0; /* 画像が潰れないように固定 */
         }
 
+        /* 共通設定：影をつけたり角を丸めたりする */
         .media-poster {
-            width: 80px;      /* 幅を統一 */
-            height: 110px;    /* 高さを統一 */
-            object-fit: cover; /* 縦横比を維持して枠いっぱいに表示 */
+            object-fit: cover; /* 枠いっぱいに表示 */
             border-radius: 5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            background-color: #e9ecef; /* 画像がない時の背景色 */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* 映画・ドラマ・本（縦長 3:4に近い比率） */
+        .poster-portrait {
+            width: 80px;
+            height: 110px;
+        }
+
+        /* ゲーム・音楽（正方形 1:1） */
+        /* ゲームは横長が多いですが、正方形にするとリストのバランスが良くなります */
+        .poster-square {
+            width: 100px;
+            height: 100px;
         }
 
         .content-container {
@@ -69,8 +80,8 @@
                     <option value="MOVIE">映画</option>
                     <option value="DRAMA">ドラマ</option>
                     <option value="BOOK">本</option>
-                    <option value="GAME">ゲーム</option>
                     <option value="MUSIC">音楽</option>
+                    <option value="GAME">ゲーム</option>
                 </select>
             </div>
 
@@ -114,8 +125,13 @@
                 <h4 class="text-secondary">気になるリスト</h4>
                 <div th:each="item : ${wantList}" class="card shadow-sm mb-3">
                     <div class="card-body media-card-body"> <div class="poster-container">
-                        <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}" class="media-poster" th:alt="${item.title}">
-                        <div th:unless="${item.imageUrl != null}" class="media-poster d-flex align-items-center justify-content-center">
+                        <img th:if="${item.imageUrl != null}"
+                             th:src="${item.imageUrl}"
+                             class="media-poster poster-portrait poster-square"
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
+                             th:alt="${item.title}">
+                        <div th:unless="${item.imageUrl != null}"
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
                             <span class="text-muted" style="font-size: 10px;">No Image</span>
                         </div>
                     </div>
@@ -125,8 +141,8 @@
                             <span th:if="${item.type == 'MOVIE'}">🎬</span>
                             <span th:if="${item.type == 'DRAMA'}">🎭</span>
                             <span th:if="${item.type == 'BOOK'}">📖</span>
-                            <span th:if="${item.type == 'GAME'}">🎮</span>
                             <span th:if="${item.type == 'MUSIC'}">🎵</span>
+                            <span th:if="${item.type == 'GAME'}">🎮</span>
                             <span th:text="${item.type}">TYPE</span>
                         </span>
                             <h5 class="card-title mt-1 mb-1" th:text="${item.title}" style="font-size: 1.1rem;">タイトル</h5>
@@ -191,8 +207,14 @@
                 <h4 class="text-success">レビュー</h4>
                 <div th:each="item : ${doneList}" class="card shadow-sm mb-3">
                     <div class="card-body media-card-body"> <div class="poster-container">
-                        <img th:if="${item.imageUrl != null}" th:src="${item.imageUrl}" class="media-poster" th:alt="${item.title}">
-                        <div th:unless="${item.imageUrl != null}" class="media-poster d-flex align-items-center justify-content-center">
+                        <img th:if="${item.imageUrl != null}"
+                             th:src="${item.imageUrl}"
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
+                             th:alt="${item.title}">
+                        <div th:unless="${item.imageUrl != null}"
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
+                            <span class="text-muted" style="font-size: 10px;">No Image</span>
+                        </div>
                             <span class="text-muted" style="font-size: 10px;">No Image</span>
                         </div>
                     </div>
@@ -211,7 +233,6 @@
                                 <input type="hidden" name="id" th:value="${item.id}">
                                 <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Are you sure?')">削除</button>
                             </form>
-                        </div>
                     </div>
                 </div>
             </div>

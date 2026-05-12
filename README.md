@@ -47,12 +47,22 @@
    - 用途: ジャンル BOOK の書籍画像（サムネイル）取得 
    - 認証: APIキー方式 
    - 環境変数: GOOGLE_BOOKS_API_KEY
-   - ドキュメント: https://developers.google.com/books
+   - ドキュメント: [Google Books APIs](https://developers.google.com/books)
 2. TMDB (The Movie Database) API
    - 用途: ジャンル MOVIE および DRAMA のポスター画像取得 
    - 認証: APIキー方式 (v3)
    - 環境変数: TMDB_API_KEY
-   - ドキュメント: https://developer.themoviedb.org/docs/getting-started
+   - ドキュメント: [TMDB API Documentation](https://developer.themoviedb.org/docs/getting-started)
+3. iTunes API
+   - 用途: 指定したキーワード（曲名、アーティスト名、アルバム名）に関連するジャケット画像（アートワーク）、視聴URL、メタデータを取得するために使用。
+   - 認証: 不要
+   - 環境変数: 不要
+   - ドキュメント: [iTunes Search API 公式ドキュメント](https://performance-partners.apple.com/search-api)
+4. RAWG API
+   - 用途: ジャンル GAME のビジュアル画像（背景画像/background_image）の取得に使用。
+   - 認証: APIキー方式
+   - 環境変数: RAWG_API_KEY
+   - ドキュメント: [RAWG API Documentation](https://rawg.io/apidocs)
 
 ## 作業予定
 - 5/1週 : 環境構築
@@ -62,4 +72,4 @@
   - 5/8 ひな形作成、Renderで公開
 - 5/11週 : 説明とログイン機能の追加、テストコードの作成
   - 5/11：Gitの練習、説明の追加、エラー処理追加
-  - 5/12：Java Silver演習、説明追加
+  - 5/12：Java Silver演習、説明追加、外部API追加

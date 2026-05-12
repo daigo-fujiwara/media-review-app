@@ -17,6 +17,8 @@ public class MediaService {
     private final MediaRepository mediaRepository;
     private final GoogleBooksService googleBooksService;
     private final TmdbService tmdbService;
+    private final iTunesService iTunesService;
+    private final RawgService rawgService;
 
     // ステータス（WANT/DONE）ごとに取得
     public List<Media> findByStatus(String status) {
@@ -26,22 +28,20 @@ public class MediaService {
     // 保存（新規登録・更新の両方で使う）
     public void save(Media media) {
 
-        System.out.println("--- DEBUG START ---");
-        System.out.println("Type: " + media.getType());
-        System.out.println("Title: " + media.getTitle());
-
         // 保存する前に、APIで画像URLを探しに行く
-        if ("BOOK".equals(media.getType())) {
-            String imageUrl = googleBooksService.fetchThumbnailUrl(media.getTitle());
-            media.setImageUrl(imageUrl);
-        } else if ("MOVIE".equals(media.getType()) || "DRAMA".equals(media.getType())) {
+        if ("MOVIE".equals(media.getType()) || "DRAMA".equals(media.getType())) {
             String imageUrl = tmdbService.fetchPosterUrl(media.getTitle(), media.getType());
             media.setImageUrl(imageUrl);
+        } else if ("BOOK".equals(media.getType())) {
+            String imageUrl = googleBooksService.fetchThumbnailUrl(media.getTitle());
+            media.setImageUrl(imageUrl);
+        } else if ("MUSIC".equals(media.getType())) {
+            media.setImageUrl(iTunesService.fetchAlbumArtUrl(media.getTitle()));
+        } else if ("GAME".equals(media.getType())) {
+            media.setImageUrl(rawgService.fetchGameImageUrl(media.getTitle()));
         }
 
         mediaRepository.save(media);
-
-        System.out.println("--- DEBUG END ---");
     }
 
     // 1件取得（見つからない場合はエラーを投げる）
