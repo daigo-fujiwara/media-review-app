@@ -69,8 +69,8 @@
                     <option value="MOVIE">映画</option>
                     <option value="DRAMA">ドラマ</option>
                     <option value="BOOK">本</option>
-                    <option value="GAME">ゲーム</option>
                     <option value="MUSIC">音楽</option>
+                    <option value="GAME">ゲーム</option>
                 </select>
             </div>
 
@@ -125,8 +125,8 @@
                             <span th:if="${item.type == 'MOVIE'}">🎬</span>
                             <span th:if="${item.type == 'DRAMA'}">🎭</span>
                             <span th:if="${item.type == 'BOOK'}">📖</span>
-                            <span th:if="${item.type == 'GAME'}">🎮</span>
                             <span th:if="${item.type == 'MUSIC'}">🎵</span>
+                            <span th:if="${item.type == 'GAME'}">🎮</span>
                             <span th:text="${item.type}">TYPE</span>
                         </span>
                             <h5 class="card-title mt-1 mb-1" th:text="${item.title}" style="font-size: 1.1rem;">タイトル</h5>
