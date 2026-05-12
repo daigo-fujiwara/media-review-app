@@ -54,7 +54,6 @@
    - 環境変数: TMDB_API_KEY
    - ドキュメント: https://developer.themoviedb.org/docs/getting-started
 
-ドキュメント: TMDB API Documentation
 ## 作業予定
 - 5/1週 : 環境構築
   - 5/1：IntelliJインストール、GitHubアカウント作成、要件定義
