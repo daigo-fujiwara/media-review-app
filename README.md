@@ -8,9 +8,9 @@
 3. データモデル設計（Entity）
 4. データ操作の実装（Repository）
 5. ビジネスロジックの実装（Service）
-6. エラー処理の実装
-7. 窓口の実装（Controller）
-8. 画面の実装（HTML/Thymeleaf）
+6. 窓口の実装（Controller）
+7. 画面の実装（HTML/Thymeleaf）
+8. エラー処理の実装
 9. テストコード作成と検証
 10. Renderでの公開
 11. ブラッシュアップ 
