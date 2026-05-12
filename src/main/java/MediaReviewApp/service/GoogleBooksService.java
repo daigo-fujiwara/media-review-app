@@ -13,8 +13,9 @@ public class GoogleBooksService {
     @Value("${GOOGLE_BOOKS_API_KEY:none}")
     private String apiKey;
 
-    private final String GOOGLE_BOOKS_API_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle:";
+    private static final String GOOGLE_BOOKS_API_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle:";
 
+    @SuppressWarnings("HttpUrlsUsage")
     public String fetchThumbnailUrl(String title) {
         // キーが設定されていない場合のガード
         if ("none".equals(apiKey)) {
@@ -29,7 +30,7 @@ public class GoogleBooksService {
             GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
 
             if (response != null && response.items() != null && !response.items().isEmpty()) {
-                var volumeInfo = response.items().get(0).volumeInfo();
+                var volumeInfo = response.items().getFirst().volumeInfo();
                 if (volumeInfo.imageLinks() != null) {
                     return volumeInfo.imageLinks().thumbnail().replace("http://", "https://");
                 }
