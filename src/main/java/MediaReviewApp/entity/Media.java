@@ -32,6 +32,10 @@ public class Media {
     // 更新日時
     private LocalDateTime updatedAt;
 
+    // 画像
+    @Column
+    private String imageUrl; // ポスターや表紙のURL用
+
     @PrePersist // 初めてデータベースに保存される時に実行。
     @PreUpdate // 既存のデータが更新される時に実行。
     protected void onUpdate() {

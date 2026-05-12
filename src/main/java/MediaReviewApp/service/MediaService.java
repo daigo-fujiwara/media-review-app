@@ -15,6 +15,7 @@ import java.util.List;
 public class MediaService {
 
     private final MediaRepository mediaRepository;
+    private final GoogleBooksService googleBooksService;
 
     // ステータス（WANT/DONE）ごとに取得
     public List<Media> findByStatus(String status) {
@@ -23,6 +24,13 @@ public class MediaService {
 
     // 保存（新規登録・更新の両方で使う）
     public void save(Media media) {
+
+        // 保存する前に、APIで画像URLを探しに行く
+        if (media.getType().equals("BOOK")) { // 本の場合だけ探す
+            String imageUrl = googleBooksService.fetchThumbnailUrl(media.getTitle());
+            media.setImageUrl(imageUrl);
+        }
+
         mediaRepository.save(media);
     }
 
