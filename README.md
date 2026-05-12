@@ -1,6 +1,6 @@
 # MediaReviewApp
 
-本や映画の「これから読みたい/観たいもの」と「読んだ/観た後の記録」を管理するWebアプリケーションです。
+メディアコンテンツの「これから読みたい/観たいもの」と「読んだ/観た後の記録」を管理するWebアプリケーションです。
 
 ## 開発工程
 1. 要件定義
@@ -42,6 +42,19 @@
 - application-dev.propertiesがローカルPC用
 - IntelliJで実行するときだけ、dev（自分用）の設定を使うように「実行構成の編集」をする。
 
+## 外部API連携
+1. Google Books API
+   - 用途: ジャンル BOOK の書籍画像（サムネイル）取得 
+   - 認証: APIキー方式 
+   - 環境変数: GOOGLE_BOOKS_API_KEY
+   - ドキュメント: https://developers.google.com/books
+2. TMDB (The Movie Database) API
+   - 用途: ジャンル MOVIE および DRAMA のポスター画像取得 
+   - 認証: APIキー方式 (v3)
+   - 環境変数: TMDB_API_KEY
+   - ドキュメント: https://developer.themoviedb.org/docs/getting-started
+
+ドキュメント: TMDB API Documentation
 ## 作業予定
 - 5/1週 : 環境構築
   - 5/1：IntelliJインストール、GitHubアカウント作成、要件定義

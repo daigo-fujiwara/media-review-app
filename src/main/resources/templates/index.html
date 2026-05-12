@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- th: で始まる命令はThymeleafのルールに従って処理する -->
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
     <meta charset="UTF-8">
@@ -45,10 +44,10 @@
             <div class="col-md-3">
                 <label for="typeSelect" class="form-label d-none">タイプ</label>
                 <select id="typeSelect" name="type" class="form-select">
-                    <option value="BOOK">本</option>
                     <option value="MOVIE">映画</option>
-                    <option value="GAME">ゲーム</option>
                     <option value="DRAMA">ドラマ</option>
+                    <option value="BOOK">本</option>
+                    <option value="GAME">ゲーム</option>
                     <option value="MUSIC">音楽</option>
                 </select>
             </div>
@@ -95,9 +94,9 @@
                     <div class="card-body">
                         <span class="badge bg-secondary text-white">
                             <span th:if="${item.type == 'MOVIE'}">🎬</span>
+                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
                             <span th:if="${item.type == 'BOOK'}">📖</span>
                             <span th:if="${item.type == 'GAME'}">🎮</span>
-                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
                             <span th:if="${item.type == 'MUSIC'}">🎵</span>
                             <span th:text="${item.type}">TYPE</span>
                         </span>
@@ -176,9 +175,9 @@
                     <div class="card-body">
                         <span class="badge bg-secondary text-white">
                             <span th:if="${item.type == 'MOVIE'}">🎬</span>
+                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
                             <span th:if="${item.type == 'BOOK'}">📖</span>
                             <span th:if="${item.type == 'GAME'}">🎮</span>
-                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
                             <span th:if="${item.type == 'MUSIC'}">🎵</span>
                             <span th:text="${item.type}">TYPE</span>
                         </span>
