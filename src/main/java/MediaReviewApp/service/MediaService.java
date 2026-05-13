@@ -41,7 +41,7 @@ public class MediaService {
             media.setImageUrl(rawgService.fetchGameImageUrl(media.getTitle()));
         }
 
-        mediaRepository.save(media);
+        mediaRepository.saveAndFlush(media);
     }
 
     // 1件取得（見つからない場合はエラーを投げる）
