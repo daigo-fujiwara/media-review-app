@@ -1,10 +1,15 @@
 package MediaReviewApp.service;
 
+import MediaReviewApp.dto.MediaCandidate;
 import MediaReviewApp.dto.TmdbResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -60,5 +65,59 @@ public class TmdbService {
         }
         System.out.println("--- TMDB DEBUG END ---");
         return null;
+    }
+
+    public List<MediaCandidate> searchCandidates(String query, String type) {
+
+        System.out.println("★Javaに届いた検索ワード: " + query);
+
+        // フィールドではなく、メソッド内で RestTemplate を生成（またはクラス上部で定義）
+        RestTemplate restTemplate = new RestTemplate();
+        // ObjectMapper も必要なのでインポートに合わせて生成
+        tools.jackson.databind.ObjectMapper objectMapper = new tools.jackson.databind.ObjectMapper();
+
+        // 映画なら "movie"、ドラマなら "tv" にカテゴリを切り替える
+        String category = "DRAMA".equals(type) ? "tv" : "movie";
+
+        String url = "https://api.themoviedb.org/3/search/" + category + "?api_key=" + apiKey
+                + "&query=" + query + "&language=ja-JP";
+
+        try {
+            // 修正ポイント：二重定義（String response = ...）を1つに整理
+            String response = restTemplate.getForObject(url, String.class);
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode results = root.get("results");
+
+            List<MediaCandidate> candidates = new ArrayList<>();
+
+            if (results != null && results.isArray()) {
+                // 最大5件まで抽出
+                // TmdbService.java のループ内を修正
+
+                for (int i = 0; i < Math.min(results.size(), 5); i++) {
+                    JsonNode node = results.get(i);
+
+                    // 💡 修正ポイント1：ドラマなら "name"、映画なら "title" を取得する
+                    String titleKey = "tv".equals(category) ? "name" : "title";
+                    String title = node.has(titleKey) ? node.get(titleKey).asString() : "不明なタイトル";
+
+                    // 画像パスの取得
+                    String path = "/images/no-image.png";
+                    if (node.has("poster_path") && !node.get("poster_path").isNull()) {
+                        path = "https://image.tmdb.org/t/p/w200" + node.get("poster_path").asString();
+                    }
+
+                    // 💡 修正ポイント2：ドラマなら "first_air_date"、映画なら "release_date" を取得する
+                    String dateKey = "tv".equals(category) ? "first_air_date" : "release_date";
+                    String releaseDate = node.has(dateKey) ? node.get(dateKey).asString() : "-";
+
+                    candidates.add(new MediaCandidate(title, path, releaseDate));
+                }
+            }
+            return candidates;
+        } catch (Exception e) {
+            log.error("検索候補の取得中にエラーが発生しました: {}", e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }

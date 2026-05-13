@@ -49,7 +49,6 @@
         }
     </style>
 </head>
-<body>
 
 <div class="container mt-4">
     <h1>メディアレビューアプリ</h1>
@@ -71,8 +70,11 @@
               onsubmit="this.querySelector('button[type=submit]').disabled=true;">
 
             <div class="col-md-4">
-                <label for="titleInput" class="form-label">タイトル</label>
-                <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトルを入力" required>
+                <label for="statusSelect" class="form-label">ステータス</label>
+                <select name="status" id="statusSelect" class="form-select">
+                    <option value="WANT">気になるリスト</option>
+                    <option value="DONE">レビュー</option>
+                </select>
             </div>
 
             <div class="col-md-4">
@@ -87,11 +89,9 @@
             </div>
 
             <div class="col-md-4">
-                <label for="statusSelect" class="form-label">ステータス</label>
-                <select name="status" id="statusSelect" class="form-select">
-                    <option value="WANT">気になるリスト</option>
-                    <option value="DONE">レビュー</option>
-                </select>
+                <label for="titleInput" class="form-label">タイトル</label>
+                <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトルを入力" required>
+                <div id="suggestionList" class="list-group position-absolute w-100 shadow" style="z-index: 1000; display: none;"></div>
             </div>
 
             <div id="reviewFields" class="col-12 mt-3">
@@ -212,10 +212,9 @@
                              th:src="${item.imageUrl}"
                              th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
                              th:alt="${item.title}">
+
                         <div th:unless="${item.imageUrl != null}"
-                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
-                            <span class="text-muted" style="font-size: 10px;">No Image</span>
-                        </div>
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex align-items-center justify-content-center bg-light' : 'media-poster poster-portrait d-flex align-items-center justify-content-center bg-light'">
                             <span class="text-muted" style="font-size: 10px;">No Image</span>
                         </div>
                     </div>
@@ -234,24 +233,103 @@
                                 <input type="hidden" name="id" th:value="${item.id}">
                                 <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Are you sure?')">削除</button>
                             </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 💡 1. 共通で使う部品（DOM）を最初に取得しておく
+        const statusSelect = document.getElementById('statusSelect');
+        const reviewFields = document.getElementById('reviewFields');
+        const titleInput = document.getElementById('titleInput');
+        const suggestionList = document.getElementById('suggestionList');
+        const typeSelect = document.getElementById('typeSelect');
+        let debounceTimer;
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const statusSelect = document.getElementById('statusSelect');
-    const reviewFields = document.getElementById('reviewFields');
+        // ステータス（気になる/レビュー）切り替えの既存処理
+        if(statusSelect) {
+            statusSelect.addEventListener('change', function() {
+                reviewFields.style.display = (this.value === 'DONE') ? 'block' : 'none';
+            });
+        }
 
-    if(statusSelect) {
-        statusSelect.addEventListener('change', function() {
-            reviewFields.style.display = (this.value === 'DONE') ? 'block' : 'none';
+        // 💡 2. 【共通関数】検索を実行するロジック（ブラッシュアップ）
+        function executeSearch() {
+            const query = titleInput.value;
+            const type = typeSelect.value;
+
+            // 空文字、または1文字の時はリストを隠して終了
+            if (query.trim().length < 2) {
+                suggestionList.innerHTML = '';
+                suggestionList.style.display = 'none';
+                return;
+            }
+
+            // 映画・ドラマ以外（本・音楽など）は現状TMDB検索対象外なので一旦隠す
+            if (type !== 'MOVIE' && type !== 'DRAMA') {
+                suggestionList.style.display = 'none';
+                return;
+            }
+
+            fetch(`/api/search/movie?query=${encodeURIComponent(query)}&type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 通信中に文字を消された場合の対策：最新の入力値が2文字未満なら表示しない
+                    if (titleInput.value.trim().length < 2) {
+                        suggestionList.style.display = 'none';
+                        return;
+                    }
+                    displaySuggestions(data);
+                })
+                .catch(error => console.error('検索エラー:', error));
+        }
+
+        // 💡 3. 各イベントで共通関数を呼び出す
+
+        // タイトル入力時（300ms待ってから実行）
+        titleInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(executeSearch, 300);
         });
-    }
-</script>
 
-</body>
+        // ジャンル（タイプ）変更時の処理
+        typeSelect.addEventListener('change', function() {
+            // 💡 ポイント：タイトル欄に自動でカーソルを合わせる（フォーカス）
+            titleInput.focus();
+
+            // ジャンルを変えた瞬間に、今の入力内容で再検索を実行
+            executeSearch();
+        });
+
+        // 💡 候補を表示する処理（中身は今のままでOK）
+        function displaySuggestions(candidates) {
+            suggestionList.innerHTML = '';
+            if (candidates.length === 0) {
+                suggestionList.style.display = 'none';
+                return;
+            }
+
+            candidates.forEach(item => {
+                const a = document.createElement('a');
+                a.classList.add('list-group-item', 'list-group-item-action');
+                a.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <img src="${item.imageUrl}" style="width: 30px; height: 45px; object-fit: cover;" class="me-2" alt="">
+                    <span>${item.title} (${item.releaseDate})</span>
+                </div>
+            `;
+                a.onclick = () => {
+                    titleInput.value = item.title;
+                    suggestionList.style.display = 'none';
+                };
+                suggestionList.appendChild(a);
+            });
+            suggestionList.style.display = 'block';
+        }
+    </script>
+
 </html>
