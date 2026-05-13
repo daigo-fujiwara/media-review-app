@@ -1,5 +1,6 @@
 package MediaReviewApp.service;
 
+import MediaReviewApp.dto.MediaCandidate;
 import MediaReviewApp.entity.Media;
 import MediaReviewApp.repository.MediaRepository;
 import jakarta.transaction.Transactional;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,6 +44,20 @@ public class MediaService {
         }
 
         mediaRepository.saveAndFlush(media);
+    }
+
+    // MediaService.java に追加するメソッドのイメージ
+    public List<MediaCandidate> searchCandidates(String query, String type) {
+
+        System.out.println("★Service振り分け開始: type=" + type);
+
+        return switch (type) {
+            case "MOVIE", "DRAMA" -> tmdbService.searchCandidates(query, type);
+            case "BOOK" -> googleBooksService.searchBooks(query); // 🚀 GoogleBooksServiceに検索メソッドを追加
+            case "MUSIC" -> iTunesService.searchMusic(query);
+            case "GAME" -> rawgService.searchGames(query);
+            default -> new ArrayList<>();
+        };
     }
 
     // 1件取得（見つからない場合はエラーを投げる）

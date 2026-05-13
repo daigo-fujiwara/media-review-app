@@ -1,9 +1,13 @@
 package MediaReviewApp.service;
 
 import MediaReviewApp.dto.GoogleBooksResponse;
+import MediaReviewApp.dto.MediaCandidate;
 import org.springframework.beans.factory.annotation.Value; // これをインポート
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GoogleBooksService {
@@ -39,5 +43,52 @@ public class GoogleBooksService {
             System.err.println("API連携エラー: " + e.getMessage());
         }
         return null;
+    }
+
+    // GoogleBooksService.java
+
+    /**
+     * タイトルから本の候補を複数検索する（サジェスト用）
+     */
+    public List<MediaCandidate> searchBooks(String title) {
+
+        System.out.println("★GoogleBooks検索実行: title=" + title + " (Key=" + apiKey + ")");
+
+        if ("none".equals(apiKey)) {
+            return new ArrayList<>();
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        List<MediaCandidate> candidates = new ArrayList<>();
+
+        try {
+            // maxResults=5 を指定して、上位5件を取得するように調整
+            String url = GOOGLE_BOOKS_API_URL + title + "&maxResults=5&key=" + apiKey;
+            GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
+
+            if (response != null && response.items() != null) {
+
+                System.out.println("★データ取得成功: " + response.items().size() + "件");
+                for (var item : response.items()) {
+                    var info = item.volumeInfo();
+                    String imageUrl = (info.imageLinks() != null)
+                            ? info.imageLinks().thumbnail().replace("http://", "https://")
+                            : null;
+
+                    // フロントエンドが必要とする形式に詰め替える
+                    candidates.add(new MediaCandidate(
+                            info.title(),
+                            imageUrl,
+                            info.publishedDate(),
+                            "BOOK" // 💡 メディアタイプを固定でセット
+                    ));
+                }
+            }else {
+                System.out.println("★データが空またはレスポンスがNULLです");
+            }
+        } catch (Exception e) {
+            System.err.println("Google Books 検索エラー: " + e.getMessage());
+        }
+        return candidates;
     }
 }

@@ -11,7 +11,8 @@ public record GoogleBooksResponse(List<Item> items) {
     public record VolumeInfo(
             String title,
             List<String> authors,
-            ImageLinks imageLinks
+            ImageLinks imageLinks,
+            String publishedDate
     ) {}
 
     public record ImageLinks(String thumbnail) {}

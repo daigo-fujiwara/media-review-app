@@ -222,6 +222,10 @@
                         <div class="content-container">
                         <span class="badge bg-secondary text-white">
                             <span th:if="${item.type == 'MOVIE'}">🎬</span>
+                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
+                            <span th:if="${item.type == 'BOOK'}">📖</span>
+                            <span th:if="${item.type == 'MUSIC'}">🎵</span>
+                            <span th:if="${item.type == 'GAME'}">🎮</span>
                             <span th:text="${item.type}">TYPE</span>
                         </span>
                             <h5 class="card-title mt-1 mb-0" th:text="${item.title}">タイトル</h5>
@@ -240,96 +244,76 @@
         </div>
     </div>
 </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 💡 1. 共通で使う部品（DOM）を最初に取得しておく
-        const statusSelect = document.getElementById('statusSelect');
-        const reviewFields = document.getElementById('reviewFields');
-        const titleInput = document.getElementById('titleInput');
-        const suggestionList = document.getElementById('suggestionList');
-        const typeSelect = document.getElementById('typeSelect');
-        let debounceTimer;
+<script>
+    const titleInput = document.getElementById('titleInput');
+    const typeSelect = document.getElementById('typeSelect');
+    const suggestionList = document.getElementById('suggestionList');
+    let debounceTimer;
 
-        // ステータス（気になる/レビュー）切り替えの既存処理
-        if(statusSelect) {
-            statusSelect.addEventListener('change', function() {
-                reviewFields.style.display = (this.value === 'DONE') ? 'block' : 'none';
-            });
-        }
+    // 💡 ブラッシュアップ：検索ロジックを関数化
+    function executeSearch() {
+        const query = titleInput.value;
+        const type = typeSelect.value;
 
-        // 💡 2. 【共通関数】検索を実行するロジック（ブラッシュアップ）
-        function executeSearch() {
-            const query = titleInput.value;
-            const type = typeSelect.value;
-
-            // 空文字、または1文字の時はリストを隠して終了
-            if (query.trim().length < 2) {
-                suggestionList.innerHTML = '';
-                suggestionList.style.display = 'none';
-                return;
-            }
-
-            // 映画・ドラマ以外（本・音楽など）は現状TMDB検索対象外なので一旦隠す
-            if (type !== 'MOVIE' && type !== 'DRAMA') {
-                suggestionList.style.display = 'none';
-                return;
-            }
-
-            fetch(`/api/search/movie?query=${encodeURIComponent(query)}&type=${type}`)
-                .then(response => response.json())
-                .then(data => {
-                    // 通信中に文字を消された場合の対策：最新の入力値が2文字未満なら表示しない
-                    if (titleInput.value.trim().length < 2) {
-                        suggestionList.style.display = 'none';
-                        return;
-                    }
-                    displaySuggestions(data);
-                })
-                .catch(error => console.error('検索エラー:', error));
-        }
-
-        // 💡 3. 各イベントで共通関数を呼び出す
-
-        // タイトル入力時（300ms待ってから実行）
-        titleInput.addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(executeSearch, 300);
-        });
-
-        // ジャンル（タイプ）変更時の処理
-        typeSelect.addEventListener('change', function() {
-            // 💡 ポイント：タイトル欄に自動でカーソルを合わせる（フォーカス）
-            titleInput.focus();
-
-            // ジャンルを変えた瞬間に、今の入力内容で再検索を実行
-            executeSearch();
-        });
-
-        // 💡 候補を表示する処理（中身は今のままでOK）
-        function displaySuggestions(candidates) {
+        if (query.trim().length < 2) {
             suggestionList.innerHTML = '';
-            if (candidates.length === 0) {
-                suggestionList.style.display = 'none';
-                return;
-            }
-
-            candidates.forEach(item => {
-                const a = document.createElement('a');
-                a.classList.add('list-group-item', 'list-group-item-action');
-                a.innerHTML = `
-                <div class="d-flex align-items-center">
-                    <img src="${item.imageUrl}" style="width: 30px; height: 45px; object-fit: cover;" class="me-2" alt="">
-                    <span>${item.title} (${item.releaseDate})</span>
-                </div>
-            `;
-                a.onclick = () => {
-                    titleInput.value = item.title;
-                    suggestionList.style.display = 'none';
-                };
-                suggestionList.appendChild(a);
-            });
-            suggestionList.style.display = 'block';
+            suggestionList.style.display = 'none';
+            return;
         }
-    </script>
 
+        // 全タイプ対応の新しいエンドポイント（想定）を叩く
+        fetch(`/api/search/media?query=${encodeURIComponent(query)}&type=${type}`)
+            .then(response => response.json())
+            .then(data => displaySuggestions(data));
+    }
+
+    // index.html の末尾に追加
+    function displaySuggestions(data) {
+        const suggestionList = document.getElementById('suggestionList');
+        suggestionList.innerHTML = ''; // リストをリセット
+
+        if (!data || data.length === 0) {
+            suggestionList.style.display = 'none';
+            return;
+        }
+
+        data.forEach(item => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'list-group-item list-group-item-action d-flex align-items-center gap-2';
+
+            // 💡 MediaCandidate(title, imageUrl, releaseDate) のフィールド名に合わせる
+            button.innerHTML = `
+            <img src="${item.imageUrl || '/images/no-image.png'}" style="width: 40px; height: 55px; object-fit: cover;" alt="">
+            <div class="text-start">
+                <div class="fw-bold" style="font-size: 0.9rem;">${item.title}</div>
+                <small class="text-muted">${item.releaseDate || ''}</small>
+            </div>
+        `;
+
+            button.onclick = () => {
+                document.getElementById('titleInput').value = item.title;
+                suggestionList.style.display = 'none';
+            };
+            suggestionList.appendChild(button);
+        });
+
+        // 🚀 最後にここを 'block' にしないと表示されません！
+        suggestionList.style.display = 'block';
+    }
+
+    // 入力時のデバウンス処理
+    titleInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(executeSearch, 300);
+    });
+
+    // 💡 ジャンル変更時にフォーカスを当てて再検索
+    typeSelect.addEventListener('change', function() {
+        titleInput.focus(); // タイトル欄にフォーカス
+        executeSearch();    // すぐに再検索
+    });
+
+    // displaySuggestions は今のままでOK
+</script>
 </html>

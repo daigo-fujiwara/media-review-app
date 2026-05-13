@@ -1,10 +1,18 @@
 package MediaReviewApp.service;
 
+import MediaReviewApp.dto.MediaCandidate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
 @Service
 public class iTunesService {
     // 日本のiTunesストアからアルバムを1件だけ検索するURL
@@ -28,5 +36,51 @@ public class iTunesService {
             System.err.println("iTunes API連携エラー: " + e.getMessage());
         }
         return null;
+    }
+
+    public List<MediaCandidate> searchMusic(String query) {
+        RestTemplate restTemplate = new RestTemplate();
+        List<MediaCandidate> candidates = new ArrayList<>();
+
+        // 💡 ObjectMapper は手動でインスタンス化する
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            // 日本語のクエリをURLエンコードする
+            String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+            String url = SEARCH_URL + encodedQuery + "&entity=song&attribute=songTerm&limit=5&country=jp&lang=ja_jp";
+
+            // 🚀 1. 一度 String として生のデータをすべて受け取る（型変換エラーが起きない）
+            String rawJson = restTemplate.getForObject(url, String.class);
+
+            // 🚀 2. 文字列(JSON)を Jackson で解析する
+            JsonNode root = mapper.readTree(rawJson);
+            JsonNode results = root.get("results");
+
+            if (results != null && results.isArray()) {
+                for (JsonNode node : results) {
+                    // trackName と artistName を取得してタイトルを作る
+                    String trackName = node.has("trackName") ? node.get("trackName").asString() : "不明な曲名";
+                    String artistName = node.has("artistName") ? node.get("artistName").asString() : "不明なアーティスト";
+                    String title = trackName + " - " + artistName;
+
+                    // 画像（ジャケット）
+                    String imageUrl = node.has("artworkUrl100") ? node.get("artworkUrl100").asString() : "/images/no-image.png";
+
+                    // 発売日
+                    String releaseDate = "-";
+                    if (node.has("releaseDate")) {
+                        releaseDate = node.get("releaseDate").asString().substring(0, 10);
+                    }
+
+                    candidates.add(new MediaCandidate(title, imageUrl, releaseDate, "MUSIC"));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("iTunes 検索エラー: " + e.getMessage());
+            log.error("iTunes 検索中にエラーが発生しました。クエリ: {}", query, e);
+        }
+
+        return candidates;
     }
 }

@@ -111,7 +111,7 @@ public class TmdbService {
                     String dateKey = "tv".equals(category) ? "first_air_date" : "release_date";
                     String releaseDate = node.has(dateKey) ? node.get(dateKey).asString() : "-";
 
-                    candidates.add(new MediaCandidate(title, path, releaseDate));
+                    candidates.add(new MediaCandidate(title, path, releaseDate, type));
                 }
             }
             return candidates;
