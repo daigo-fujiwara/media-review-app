@@ -42,11 +42,10 @@ class MediaViewControllerTest {
         assertEquals("index", viewName);
     }
 
-    // --- ここを追加 ---
     @Test
     @DisplayName("異常時：サービスでエラーが起きたとき、戻り値が 'error' になるか確認")
     void testIndex_Error() {
-        // 1. 準備：サービスが呼ばれたら例外を投げるように「演技指導」
+        // 1. 準備：サービスが呼ばれたら例外を投げるように命令
         Mockito.when(mediaService.findByStatus(Mockito.anyString()))
                 .thenThrow(new RuntimeException("テスト用エラー"));
 
@@ -57,7 +56,7 @@ class MediaViewControllerTest {
 
         // 3. 検証：戻り値が "error" になっているか
         assertEquals("error", viewName);
-        // モデルにエラーメッセージが格納されているかも確認できる
+        // モデルにエラーメッセージが格納されているかも確認
         assertEquals("データの読み込みに失敗しました。", model.getAttribute("errorMessage"));
     }
 }

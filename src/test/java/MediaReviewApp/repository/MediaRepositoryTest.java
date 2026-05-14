@@ -44,7 +44,6 @@ public class MediaRepositoryTest {
         assertThat(results).hasSize(2);
 
         // ② 最初（[0]番目）のデータが、後から入れた「新しい映画」になっているか
-        // ※OrderByUpdatedAtDesc が正しく動いていれば、新しい方が先に来ます
         assertThat(results.getFirst().getTitle()).isEqualTo("ハウルの動く城（2004）");
 
         // ③ 取得されたリストの中に、DONEのステータスが混じっていないか

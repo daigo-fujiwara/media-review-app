@@ -44,7 +44,7 @@ class MediaServiceTest {
     @Test
     @DisplayName("WANTリストの取得メソッドが、リポジトリを正しく呼び出しているか")
     void testGetWantList() {
-        // 1. 準備 (Arrange)
+        // 1. 準備
         // リポジトリが返してくるデータをあらかじめ作る
         List<Media> mockMediaList = new ArrayList<>();
         Media m = new Media();
@@ -71,7 +71,7 @@ class MediaServiceTest {
     @Test
     @DisplayName("IDを指定してステータスを更新できるか")
     void testUpdateStatus() {
-        // 1. 準備 (Arrange)
+        // 1. 準備
         Long targetId = 100L;
         String newStatus = "DONE";
 
@@ -81,7 +81,7 @@ class MediaServiceTest {
         mockMedia.setTitle("テスト映画");
         mockMedia.setStatus("WANT"); // 最初はWANT
 
-        // 演技指導1：findByIdされたら、この偽物データを返しなさい
+        // 準備：findByIdされたら、この偽物データを返しなさい
         // ※ Optional.of(...) で包むのがポイントです
         when(mediaRepository.findById(targetId)).thenReturn(java.util.Optional.of(mockMedia));
 
@@ -102,7 +102,7 @@ class MediaServiceTest {
         Long targetId = 999L;
         when(mediaRepository.findById(targetId)).thenReturn(Optional.empty());
 
-        // 変更点：実行部分をassertThrowsで囲む
+        // 実行部分をassertThrowsで囲む
         assertThrows(RuntimeException.class, () -> mediaService.updateStatus(targetId, "DONE"));
         verify(mediaRepository, never()).save(any());
     }
@@ -112,7 +112,6 @@ class MediaServiceTest {
     void testDelete() {
         Long targetId = 1L;
 
-        // 変更点：この1行を追加しないと、Service内のif文で例外に飛ばされる
         when(mediaRepository.existsById(targetId)).thenReturn(true);
 
         mediaService.delete(targetId);
