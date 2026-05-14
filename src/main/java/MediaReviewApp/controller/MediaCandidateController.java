@@ -15,7 +15,7 @@ public class MediaCandidateController {
 
     private final MediaService mediaService;
 
-    @GetMapping("/candidate") // /api/search/media に来た時の処理
+    @GetMapping("/candidate")
     public List<MediaCandidateDto> search(@RequestParam String query, @RequestParam String type) {
 
         // MediaService -> それぞれのServiceからの外部APIを呼び出す

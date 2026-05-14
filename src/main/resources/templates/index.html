@@ -12,6 +12,7 @@
             padding: 15px;        /* 中の余白 */
             min-height: 400px;    /* 最低限の高さ */
         }
+
         .card { margin-bottom: 10px; }
         #reviewFields { display: none; }
 
@@ -24,7 +25,6 @@
             flex-shrink: 0; /* 画像が潰れないように固定 */
         }
 
-        /* 共通設定：影をつけたり角を丸めたりする */
         .media-poster {
             object-fit: cover; /* 枠いっぱいに表示 */
             border-radius: 5px;
@@ -49,152 +49,193 @@
         }
     </style>
 </head>
+<body>
+    <div class="container mt-4">
+        <h1>メディアレビューアプリ</h1>
 
-<div class="container mt-4">
-    <h1>メディアレビューアプリ</h1>
+        <!--/*@thymesVar id="successMessage" type="java.lang.String"*/-->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMessage}">成功しました！</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-    <!--/*@thymesVar id="successMessage" type="java.lang.String"*/-->
-    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${successMessage}">成功しました！</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMessage}">エラーが発生しました。</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 
-    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${errorMessage}">エラーが発生しました。</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+        <div class="card p-3 mb-4">
+            <h5>気になるリスト登録 / レビュー登録</h5>
+            <form th:action="@{/save}" method="post" class="row g-3 align-items-end"
+                  onsubmit="this.querySelector('button[type=submit]').disabled=true;">
 
-    <div class="card p-3 mb-4">
-        <h5>気になるリスト登録 / レビュー登録</h5>
-        <form th:action="@{/save}" method="post" class="row g-3 align-items-end"
-              onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                <div class="col-md-4">
+                    <label for="statusSelect" class="form-label">ステータス</label>
+                    <select name="status" id="statusSelect" class="form-select">
+                        <option value="WANT">気になるリスト</option>
+                        <option value="DONE">レビュー</option>
+                    </select>
+                </div>
 
-            <div class="col-md-4">
-                <label for="statusSelect" class="form-label">ステータス</label>
-                <select name="status" id="statusSelect" class="form-select">
-                    <option value="WANT">気になるリスト</option>
-                    <option value="DONE">レビュー</option>
-                </select>
-            </div>
+                <div class="col-md-4">
+                    <label for="typeSelect" class="form-label">タイプ</label>
+                    <select id="typeSelect" name="type" class="form-select">
+                        <option value="MOVIE">映画</option>
+                        <option value="DRAMA">ドラマ</option>
+                        <option value="BOOK">本</option>
+                        <option value="MUSIC">音楽</option>
+                        <option value="GAME">ゲーム</option>
+                    </select>
+                </div>
 
-            <div class="col-md-4">
-                <label for="typeSelect" class="form-label">タイプ</label>
-                <select id="typeSelect" name="type" class="form-select">
-                    <option value="MOVIE">映画</option>
-                    <option value="DRAMA">ドラマ</option>
-                    <option value="BOOK">本</option>
-                    <option value="MUSIC">音楽</option>
-                    <option value="GAME">ゲーム</option>
-                </select>
-            </div>
+                <div class="col-md-4">
+                    <label for="titleInput" class="form-label">タイトル</label>
+                    <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトルを入力" required>
+                    <div id="suggestionList" class="list-group position-absolute w-100 shadow" style="z-index: 1000; display: none;"></div>
+                </div>
 
-            <div class="col-md-4">
-                <label for="titleInput" class="form-label">タイトル</label>
-                <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトルを入力" required>
-                <div id="suggestionList" class="list-group position-absolute w-100 shadow" style="z-index: 1000; display: none;"></div>
-            </div>
-
-            <div id="reviewFields" class="col-12 mt-3">
-                <div class="row g-2">
-                    <div class="col-md-2">
-                        <label for="ratingInput" class="form-label">評価</label>
-                        <select id="ratingInput" name="rating" class="form-select">
-                            <option value="0">評価なし</option>
-                            <option value="5">★★★★★</option>
-                            <option value="4">★★★★</option>
-                            <option value="3" selected>★★★</option>
-                            <option value="2">★★</option>
-                            <option value="1">★</option>
-                        </select>
-                    </div>
-                    <div class="col-md-10">
-                        <label for="commentInput" class="form-label">レビュー</label>
-                        <textarea id="commentInput" name="comment" class="form-control" placeholder="感想をどうぞ" rows="2"></textarea>
+                <div id="reviewFields" class="col-12 mt-3">
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <label for="ratingInput" class="form-label">評価</label>
+                            <select id="ratingInput" name="rating" class="form-select">
+                                <option value="0">評価なし</option>
+                                <option value="5">★★★★★</option>
+                                <option value="4">★★★★</option>
+                                <option value="3" selected>★★★</option>
+                                <option value="2">★★</option>
+                                <option value="1">★</option>
+                            </select>
+                        </div>
+                        <div class="col-md-10">
+                            <label for="commentInput" class="form-label">レビュー</label>
+                            <textarea id="commentInput" name="comment" class="form-control" placeholder="感想をどうぞ" rows="2"></textarea>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-12 mt-3">
-                <button type="submit" class="btn btn-primary w-100">リストに追加する</button>
-            </div>
-        </form>
-    </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-primary w-100">リストに追加する</button>
+                </div>
+            </form>
+        </div>
 
-    <div class="row">
-        <div class="col-12 col-md-6 mb-4">
-            <div class="media-column">
-                <h4 class="text-secondary">気になるリスト</h4>
-                <div th:each="item : ${wantList}" class="card shadow-sm mb-3">
-                    <div class="card-body media-card-body"> <div class="poster-container">
-                        <img th:if="${item.imageUrl != null}"
-                             th:src="${item.imageUrl}"
-                             class="media-poster poster-portrait poster-square"
-                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
-                             th:alt="${item.title}">
-                        <div th:unless="${item.imageUrl != null}"
-                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
-                            <span class="text-muted" style="font-size: 10px;">No Image</span>
-                        </div>
-                    </div>
-
-                        <div class="content-container">
-                        <span class="badge bg-secondary text-white">
-                            <span th:if="${item.type == 'MOVIE'}">🎬</span>
-                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
-                            <span th:if="${item.type == 'BOOK'}">📖</span>
-                            <span th:if="${item.type == 'MUSIC'}">🎵</span>
-                            <span th:if="${item.type == 'GAME'}">🎮</span>
-                            <span th:text="${item.type}">TYPE</span>
-                        </span>
-                            <h5 class="card-title mt-1 mb-1" th:text="${item.title}" style="font-size: 1.1rem;">タイトル</h5>
-                            <div class="mt-2 d-flex gap-2">
-                                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" th:data-bs-target="'#reviewModal' + ${item.id}">完了！</button>
-                                <form th:action="@{/delete}" method="post">
-                                    <input type="hidden" name="id" th:value="${item.id}">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('本当に削除しますか？')">削除</button>
-                                </form>
+        <div class="row">
+            <div class="col-12 col-md-6 mb-4">
+                <div class="media-column">
+                    <h4 class="text-secondary">気になるリスト</h4>
+                    <div th:each="item : ${wantList}" class="card shadow-sm mb-3">
+                        <div class="card-body media-card-body"> <div class="poster-container">
+                            <img th:if="${item.imageUrl != null}"
+                                 th:src="${item.imageUrl}"
+                                 class="media-poster poster-portrait poster-square"
+                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
+                                 th:alt="${item.title}">
+                            <div th:unless="${item.imageUrl != null}"
+                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
+                                <span class="text-muted" style="font-size: 10px;">No Image</span>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="modal fade" th:id="'reviewModal' + ${item.id}" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <form th:action="@{/save}" method="post"
-                                      onsubmit="this.querySelector('button[type=submit]').disabled=true;">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">"<span th:text="${item.title}"></span>"の評価</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body text-start">
+                            <div class="content-container">
+                            <span class="badge bg-secondary text-white">
+                                <span th:if="${item.type == 'MOVIE'}">🎬</span>
+                                <span th:if="${item.type == 'DRAMA'}">🎭</span>
+                                <span th:if="${item.type == 'BOOK'}">📖</span>
+                                <span th:if="${item.type == 'MUSIC'}">🎵</span>
+                                <span th:if="${item.type == 'GAME'}">🎮</span>
+                                <span th:text="${item.type}">TYPE</span>
+                            </span>
+                                <h5 class="card-title mt-1 mb-1" th:text="${item.title}" style="font-size: 1.1rem;">タイトル</h5>
+                                <div class="mt-2 d-flex gap-2">
+                                    <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" th:data-bs-target="'#reviewModal' + ${item.id}">完了！</button>
+                                    <form th:action="@{/delete}" method="post">
                                         <input type="hidden" name="id" th:value="${item.id}">
-                                        <input type="hidden" name="title" th:value="${item.title}">
-                                        <input type="hidden" name="type" th:value="${item.type}">
-                                        <input type="hidden" name="status" value="DONE">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('本当に削除しますか？')">削除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">評価</label>
-                                            <label>
-                                                <select name="rating" class="form-select">
-                                                    <option value="5">★★★★★</option>
-                                                    <option value="4">★★★★</option>
-                                                    <option value="3" selected>★★★</option>
-                                                    <option value="2">★★</option>
-                                                    <option value="1">★</option>
-                                                </select>
-                                            </label>
+                        <div class="modal fade" th:id="'reviewModal' + ${item.id}" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form th:action="@{/save}" method="post"
+                                          onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">"<span th:text="${item.title}"></span>"の評価</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                         </div>
-                                        <div class="mb-3">
-                                            <label class="form-label">レビュー</label>
-                                            <label>
-                                                <textarea name="comment" class="form-control" rows="3" placeholder="最高！"></textarea>
-                                            </label>
+                                        <div class="modal-body text-start">
+                                            <input type="hidden" name="id" th:value="${item.id}">
+                                            <input type="hidden" name="title" th:value="${item.title}">
+                                            <input type="hidden" name="type" th:value="${item.type}">
+                                            <input type="hidden" name="status" value="DONE">
+
+                                            <div class="mb-3">
+                                                <label class="form-label">評価</label>
+                                                <label>
+                                                    <select name="rating" class="form-select">
+                                                        <option value="5">★★★★★</option>
+                                                        <option value="4">★★★★</option>
+                                                        <option value="3" selected>★★★</option>
+                                                        <option value="2">★★</option>
+                                                        <option value="1">★</option>
+                                                    </select>
+                                                </label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">レビュー</label>
+                                                <label>
+                                                    <textarea name="comment" class="form-control" rows="3" placeholder="最高！"></textarea>
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-                                        <button type="submit" class="btn btn-success">保存する</button>
-                                    </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                                            <button type="submit" class="btn btn-success">保存する</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <div class="media-column">
+                    <h4 class="text-success">レビュー</h4>
+                    <div th:each="item : ${doneList}" class="card shadow-sm mb-3">
+                        <div class="card-body media-card-body"> <div class="poster-container">
+                            <img th:if="${item.imageUrl != null}"
+                                 th:src="${item.imageUrl}"
+                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
+                                 th:alt="${item.title}">
+
+                            <div th:unless="${item.imageUrl != null}"
+                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex align-items-center justify-content-center bg-light' : 'media-poster poster-portrait d-flex align-items-center justify-content-center bg-light'">
+                                <span class="text-muted" style="font-size: 10px;">No Image</span>
+                            </div>
+                        </div>
+
+                            <div class="content-container">
+                            <span class="badge bg-secondary text-white">
+                                <span th:if="${item.type == 'MOVIE'}">🎬</span>
+                                <span th:if="${item.type == 'DRAMA'}">🎭</span>
+                                <span th:if="${item.type == 'BOOK'}">📖</span>
+                                <span th:if="${item.type == 'MUSIC'}">🎵</span>
+                                <span th:if="${item.type == 'GAME'}">🎮</span>
+                                <span th:text="${item.type}">TYPE</span>
+                            </span>
+                                <h5 class="card-title mt-1 mb-0" th:text="${item.title}">タイトル</h5>
+                                <p class="text-warning mb-1">
+                                    <span th:if="${item.rating != null and item.rating > 0}" th:text="${#strings.repeat('★', item.rating)}"></span>
+                                </p>
+                                <p class="card-text small text-muted mb-2" th:text="${item.comment}"></p>
+                                <form th:action="@{/delete}" method="post" class="text-end">
+                                    <input type="hidden" name="id" th:value="${item.id}">
+                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Are you sure?')">削除</button>
                                 </form>
                             </div>
                         </div>
@@ -202,118 +243,73 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-12 col-md-6">
-            <div class="media-column">
-                <h4 class="text-success">レビュー</h4>
-                <div th:each="item : ${doneList}" class="card shadow-sm mb-3">
-                    <div class="card-body media-card-body"> <div class="poster-container">
-                        <img th:if="${item.imageUrl != null}"
-                             th:src="${item.imageUrl}"
-                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
-                             th:alt="${item.title}">
-
-                        <div th:unless="${item.imageUrl != null}"
-                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex align-items-center justify-content-center bg-light' : 'media-poster poster-portrait d-flex align-items-center justify-content-center bg-light'">
-                            <span class="text-muted" style="font-size: 10px;">No Image</span>
-                        </div>
-                    </div>
-
-                        <div class="content-container">
-                        <span class="badge bg-secondary text-white">
-                            <span th:if="${item.type == 'MOVIE'}">🎬</span>
-                            <span th:if="${item.type == 'DRAMA'}">🎭</span>
-                            <span th:if="${item.type == 'BOOK'}">📖</span>
-                            <span th:if="${item.type == 'MUSIC'}">🎵</span>
-                            <span th:if="${item.type == 'GAME'}">🎮</span>
-                            <span th:text="${item.type}">TYPE</span>
-                        </span>
-                            <h5 class="card-title mt-1 mb-0" th:text="${item.title}">タイトル</h5>
-                            <p class="text-warning mb-1">
-                                <span th:if="${item.rating != null and item.rating > 0}" th:text="${#strings.repeat('★', item.rating)}"></span>
-                            </p>
-                            <p class="card-text small text-muted mb-2" th:text="${item.comment}"></p>
-                            <form th:action="@{/delete}" method="post" class="text-end">
-                                <input type="hidden" name="id" th:value="${item.id}">
-                                <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Are you sure?')">削除</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-</div>
-<script>
-    const titleInput = document.getElementById('titleInput');
-    const typeSelect = document.getElementById('typeSelect');
-    const suggestionList = document.getElementById('suggestionList');
-    let debounceTimer;
 
-    // 💡 ブラッシュアップ：検索ロジックを関数化
-    function executeSearch() {
-        const query = titleInput.value;
-        const type = typeSelect.value;
-
-        if (query.trim().length < 2) {
-            suggestionList.innerHTML = '';
-            suggestionList.style.display = 'none';
-            return;
-        }
-
-        // 全タイプ対応の新しいエンドポイント（想定）を叩く
-        fetch(`/candidate?query=${encodeURIComponent(query)}&type=${type}`)
-            .then(response => response.json())
-            .then(data => displaySuggestions(data));
-    }
-
-    // index.html の末尾に追加
-    function displaySuggestions(data) {
+    <script>
+        const titleInput = document.getElementById('titleInput');
+        const typeSelect = document.getElementById('typeSelect');
         const suggestionList = document.getElementById('suggestionList');
-        suggestionList.innerHTML = ''; // リストをリセット
+        let debounceTimer;
 
-        if (!data || data.length === 0) {
-            suggestionList.style.display = 'none';
-            return;
+        function executeSearch() {
+            const query = titleInput.value;
+            const type = typeSelect.value;
+
+            if (query.trim().length < 2) {
+                suggestionList.innerHTML = '';
+                suggestionList.style.display = 'none';
+                return;
+            }
+
+            // 全タイプ対応の新しいエンドポイント（想定）を叩く
+            fetch(`/candidate?query=${encodeURIComponent(query)}&type=${type}`)
+                .then(response => response.json())
+                .then(data => displaySuggestions(data));
         }
 
-        data.forEach(item => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'list-group-item list-group-item-action d-flex align-items-center gap-2';
+        // index.html の末尾に追加
+        function displaySuggestions(data) {
+            const suggestionList = document.getElementById('suggestionList');
+            suggestionList.innerHTML = ''; // リストをリセット
 
-            // 💡 MediaCandidate(title, imageUrl, releaseDate) のフィールド名に合わせる
-            button.innerHTML = `
-            <img src="${item.imageUrl || '/images/no-image.png'}" style="width: 40px; height: 55px; object-fit: cover;" alt="">
-            <div class="text-start">
-                <div class="fw-bold" style="font-size: 0.9rem;">${item.title}</div>
-                <small class="text-muted">${item.releaseDate || ''}</small>
-            </div>
-        `;
-
-            button.onclick = () => {
-                document.getElementById('titleInput').value = item.title;
+            if (!data || data.length === 0) {
                 suggestionList.style.display = 'none';
-            };
-            suggestionList.appendChild(button);
+                return;
+            }
+
+            data.forEach(item => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'list-group-item list-group-item-action d-flex align-items-center gap-2';
+
+                // 💡 MediaCandidate(title, imageUrl, releaseDate) のフィールド名に合わせる
+                button.innerHTML = `
+                <img src="${item.imageUrl || '/images/no-image.png'}" style="width: 40px; height: 55px; object-fit: cover;" alt="">
+                <div class="text-start">
+                    <div class="fw-bold" style="font-size: 0.9rem;">${item.title}</div>
+                    <small class="text-muted">${item.releaseDate || ''}</small>
+                </div>
+            `;
+
+                button.onclick = () => {
+                    document.getElementById('titleInput').value = item.title;
+                    suggestionList.style.display = 'none';
+                };
+                suggestionList.appendChild(button);
+            });
+
+            suggestionList.style.display = 'block';
+        }
+
+        titleInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(executeSearch, 300);
         });
 
-        // 🚀 最後にここを 'block' にしないと表示されません！
-        suggestionList.style.display = 'block';
-    }
-
-    // 入力時のデバウンス処理
-    titleInput.addEventListener('input', function() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(executeSearch, 300);
-    });
-
-    // 💡 ジャンル変更時にフォーカスを当てて再検索
-    typeSelect.addEventListener('change', function() {
-        titleInput.focus(); // タイトル欄にフォーカス
-        executeSearch();    // すぐに再検索
-    });
-
-    // displaySuggestions は今のままでOK
-</script>
+        typeSelect.addEventListener('change', function() {
+            titleInput.focus(); // タイトル欄にフォーカス
+            executeSearch();    // すぐに再検索
+        });
+    </script>
+</body>
 </html>
