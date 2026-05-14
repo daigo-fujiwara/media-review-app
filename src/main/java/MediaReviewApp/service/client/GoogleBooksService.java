@@ -1,8 +1,7 @@
-package MediaReviewApp.service;
+package MediaReviewApp.service.client;
 
-import MediaReviewApp.dto.GoogleBooksResponse;
-import MediaReviewApp.dto.MediaCandidate;
-import org.springframework.beans.factory.annotation.Value; // これをインポート
+import MediaReviewApp.dto.MediaCandidateDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,6 +10,18 @@ import java.util.List;
 
 @Service
 public class GoogleBooksService {
+
+    public record GoogleBooksResponse(List<Item> items) {
+        public record Item(VolumeInfo volumeInfo) {}
+
+        public record VolumeInfo(
+                String title,
+                ImageLinks imageLinks,
+                String publishedDate
+        ) {}
+
+        public record ImageLinks(String thumbnail) {}
+    }
 
     // 環境変数 GOOGLE_BOOKS_API_KEY から値を読み込む
     // 設定されていない場合はデフォルト値として "none" を代入する
@@ -45,21 +56,17 @@ public class GoogleBooksService {
         return null;
     }
 
-    // GoogleBooksService.java
-
     /**
      * タイトルから本の候補を複数検索する（サジェスト用）
      */
-    public List<MediaCandidate> searchBooks(String title) {
-
-        System.out.println("★GoogleBooks検索実行: title=" + title + " (Key=" + apiKey + ")");
+    public List<MediaCandidateDto> searchBooks(String title) {
 
         if ("none".equals(apiKey)) {
             return new ArrayList<>();
         }
 
         RestTemplate restTemplate = new RestTemplate();
-        List<MediaCandidate> candidates = new ArrayList<>();
+        List<MediaCandidateDto> candidates = new ArrayList<>();
 
         try {
             // maxResults=5 を指定して、上位5件を取得するように調整
@@ -67,23 +74,21 @@ public class GoogleBooksService {
             GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
 
             if (response != null && response.items() != null) {
-
-                System.out.println("★データ取得成功: " + response.items().size() + "件");
                 for (var item : response.items()) {
                     var info = item.volumeInfo();
-                    String imageUrl = (info.imageLinks() != null)
-                            ? info.imageLinks().thumbnail().replace("http://", "https://")
-                            : null;
 
-                    // フロントエンドが必要とする形式に詰め替える
-                    candidates.add(new MediaCandidate(
+                    // .replace() を削除。三項演算子も1行でスッキリさせます
+                    String imageUrl = (info.imageLinks() != null) ? info.imageLinks().thumbnail() : null;
+
+                    // フロントエンドが必要とする形式に詰め替え
+                    candidates.add(new MediaCandidateDto(
                             info.title(),
                             imageUrl,
                             info.publishedDate(),
-                            "BOOK" // 💡 メディアタイプを固定でセット
+                            "BOOK"
                     ));
                 }
-            }else {
+            } else {
                 System.out.println("★データが空またはレスポンスがNULLです");
             }
         } catch (Exception e) {

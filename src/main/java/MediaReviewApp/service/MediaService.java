@@ -1,8 +1,12 @@
 package MediaReviewApp.service;
 
-import MediaReviewApp.dto.MediaCandidate;
+import MediaReviewApp.dto.MediaCandidateDto;
 import MediaReviewApp.entity.Media;
 import MediaReviewApp.repository.MediaRepository;
+import MediaReviewApp.service.client.GoogleBooksService;
+import MediaReviewApp.service.client.RawgService;
+import MediaReviewApp.service.client.TmdbService;
+import MediaReviewApp.service.client.iTunesService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -46,27 +50,12 @@ public class MediaService {
         mediaRepository.saveAndFlush(media);
     }
 
-    // MediaService.java に追加するメソッドのイメージ
-    public List<MediaCandidate> searchCandidates(String query, String type) {
-
-        System.out.println("★Service振り分け開始: type=" + type);
-
-        return switch (type) {
-            case "MOVIE", "DRAMA" -> tmdbService.searchCandidates(query, type);
-            case "BOOK" -> googleBooksService.searchBooks(query); // 🚀 GoogleBooksServiceに検索メソッドを追加
-            case "MUSIC" -> iTunesService.searchMusic(query);
-            case "GAME" -> rawgService.searchGames(query);
-            default -> new ArrayList<>();
-        };
-    }
-
-    // 1件取得（見つからない場合はエラーを投げる）
+    // 下にあるupdateStatusメソッドと合わせてステータス更新
     public Media findById(Long id) {
         return mediaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("データが見つかりませんでした。ID: " + id));
     }
 
-    // ステータス更新
     public void updateStatus(Long id, String status) {
         // findByIdがエラーを投げてくれるので、ここでは正常系（見つかった場合）のことだけ書く
         Media media = findById(id);
@@ -82,5 +71,17 @@ public class MediaService {
             throw new RuntimeException("削除しようとしたデータが存在しません。ID: " + id);
         }
         mediaRepository.deleteById(id);
+    }
+
+    // 予測候補
+    public List<MediaCandidateDto> searchCandidates(String query, String type) {
+
+        return switch (type) {
+            case "MOVIE", "DRAMA" -> tmdbService.searchMovieDrama(query, type);
+            case "BOOK" -> googleBooksService.searchBooks(query);
+            case "MUSIC" -> iTunesService.searchMusic(query);
+            case "GAME" -> rawgService.searchGames(query);
+            default -> new ArrayList<>();
+        };
     }
 }

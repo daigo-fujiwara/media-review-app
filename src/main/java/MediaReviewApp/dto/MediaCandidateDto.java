@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MediaCandidate {
+public class MediaCandidateDto {
     private String title;
     private String imageUrl;
     private String releaseDate;

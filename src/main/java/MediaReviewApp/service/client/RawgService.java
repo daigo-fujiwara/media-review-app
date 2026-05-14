@@ -1,6 +1,6 @@
-package MediaReviewApp.service;
+package MediaReviewApp.service.client;
 
-import MediaReviewApp.dto.MediaCandidate;
+import MediaReviewApp.dto.MediaCandidateDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -40,9 +40,9 @@ public class RawgService {
         return null;
     }
 
-    public List<MediaCandidate> searchGames(String query) {
+    public List<MediaCandidateDto> searchGames(String query) {
         RestTemplate restTemplate = new RestTemplate();
-        List<MediaCandidate> candidates = new ArrayList<>();
+        List<MediaCandidateDto> candidates = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
 
         System.out.println("★DEBUG: 現在使用中のAPIキー -> [" + apiKey + "]");
@@ -72,7 +72,7 @@ public class RawgService {
                             ? node.get("released").asString()
                             : "-";
 
-                    candidates.add(new MediaCandidate(title, imageUrl, releaseDate, "GAME"));
+                    candidates.add(new MediaCandidateDto(title, imageUrl, releaseDate, "GAME"));
                 }
             }
         } catch (Exception e) {

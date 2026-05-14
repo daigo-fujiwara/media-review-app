@@ -1,7 +1,7 @@
-package MediaReviewApp.service;
+package MediaReviewApp.service.client;
 
-import MediaReviewApp.dto.MediaCandidate;
-import MediaReviewApp.dto.TmdbResponse;
+import MediaReviewApp.dto.MediaCandidateDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +15,14 @@ import java.util.List;
 @Service
 public class TmdbService {
 
+    public record TmdbResponse(
+            List<TmdbResult> results
+    ) {}
+
+    public record TmdbResult(
+            @JsonProperty("poster_path") String posterPath
+    ) {}
+
     @Value("${TMDB_API_KEY:none}")
     private String apiKey;
 
@@ -24,9 +32,6 @@ public class TmdbService {
 
     public String fetchPosterUrl(String title, String mediaType) {
 
-        // デバッグ①：APIキーがちゃんと読み込めているか
-        System.out.println("--- TMDB DEBUG START ---");
-        System.out.println("DEBUG: apiKey = [" + apiKey + "]");
         if ("none".equals(apiKey)) return null;
 
         RestTemplate restTemplate = new RestTemplate();
@@ -37,39 +42,25 @@ public class TmdbService {
             String url = String.format("%s/search/%s?api_key=%s&query=%s&language=ja",
                     BASE_URL, category, apiKey, title);
 
-            // デバッグ②：生成したURLが正しいか（これをブラウザに貼って確認できる）
-            System.out.println("DEBUG: Request URL = " + url);
-
             TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
 
-            // デバッグ③：レスポンスオブジェクト全体の状態
-            if (response == null) {
-                System.out.println("DEBUG: Response object is NULL");
-            } else if (response.results() == null) {
-                System.out.println("DEBUG: Results list is NULL");
-            } else if (response.results().isEmpty()) {
-                System.out.println("DEBUG: Results list is EMPTY (No match found)");
-            } else {
-                // デバッグ④：1件目のパスが取れているか
-                String path = response.results().getFirst().posterPath(); // getFirst()でエラーが出る場合を想定
-                System.out.println("DEBUG: Found poster_path = " + path);
+            /// response、results、およびリストの空チェックを一気に行う
+            if (response != null && response.results() != null && !response.results().isEmpty()) {
+                // getFirst()の代わりに、より汎用的な get(0) を使用
+                String path = response.results().getFirst().posterPath();
 
                 if (path != null) {
-                    String fullUrl = IMAGE_BASE_URL + path;
-                    System.out.println("DEBUG: Success! Full URL = " + fullUrl);
-                    return fullUrl;
+                    return IMAGE_BASE_URL + path;
                 }
             }
         } catch (Exception e) {
-            log.error("TMDB連携エラーが発生しました: {}", e.getMessage());
+            // 実務ではスタックトレースもログに残すのが一般的です
+            log.error("TMDB連携エラー: {} / Title: {}", e.getMessage(), title, e);
         }
-        System.out.println("--- TMDB DEBUG END ---");
         return null;
     }
 
-    public List<MediaCandidate> searchCandidates(String query, String type) {
-
-        System.out.println("★Javaに届いた検索ワード: " + query);
+    public List<MediaCandidateDto> searchMovieDrama(String query, String type) {
 
         // フィールドではなく、メソッド内で RestTemplate を生成（またはクラス上部で定義）
         RestTemplate restTemplate = new RestTemplate();
@@ -88,7 +79,7 @@ public class TmdbService {
             JsonNode root = objectMapper.readTree(response);
             JsonNode results = root.get("results");
 
-            List<MediaCandidate> candidates = new ArrayList<>();
+            List<MediaCandidateDto> candidates = new ArrayList<>();
 
             if (results != null && results.isArray()) {
                 // 最大5件まで抽出
@@ -111,7 +102,7 @@ public class TmdbService {
                     String dateKey = "tv".equals(category) ? "first_air_date" : "release_date";
                     String releaseDate = node.has(dateKey) ? node.get(dateKey).asString() : "-";
 
-                    candidates.add(new MediaCandidate(title, path, releaseDate, type));
+                    candidates.add(new MediaCandidateDto(title, path, releaseDate, type));
                 }
             }
             return candidates;

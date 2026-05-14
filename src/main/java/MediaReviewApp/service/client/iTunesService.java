@@ -1,6 +1,6 @@
-package MediaReviewApp.service;
+package MediaReviewApp.service.client;
 
-import MediaReviewApp.dto.MediaCandidate;
+import MediaReviewApp.dto.MediaCandidateDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -38,9 +38,9 @@ public class iTunesService {
         return null;
     }
 
-    public List<MediaCandidate> searchMusic(String query) {
+    public List<MediaCandidateDto> searchMusic(String query) {
         RestTemplate restTemplate = new RestTemplate();
-        List<MediaCandidate> candidates = new ArrayList<>();
+        List<MediaCandidateDto> candidates = new ArrayList<>();
 
         // 💡 ObjectMapper は手動でインスタンス化する
         ObjectMapper mapper = new ObjectMapper();
@@ -73,7 +73,7 @@ public class iTunesService {
                         releaseDate = node.get("releaseDate").asString().substring(0, 10);
                     }
 
-                    candidates.add(new MediaCandidate(title, imageUrl, releaseDate, "MUSIC"));
+                    candidates.add(new MediaCandidateDto(title, imageUrl, releaseDate, "MUSIC"));
                 }
             }
         } catch (Exception e) {

@@ -10,9 +10,9 @@ import org.springframework.ui.Model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MediaControllerTest {
+class MediaViewControllerTest {
 
-    private MediaController mediaController;
+    private MediaViewController mediaController;
     private MediaService mediaService;
 
     @BeforeEach
@@ -22,7 +22,7 @@ class MediaControllerTest {
         mediaService = Mockito.mock(MediaService.class);
 
         // 2. Controllerをインスタンス化して、Serviceのモックを渡す。
-        mediaController = new MediaController(mediaService);
+        mediaController = new MediaViewController(mediaService);
         /*
         本番ではSpring Bootがmainメソッドでインスタンス化するが、テストでは自分でnewして
         インスタンス化する。これにより、Spring Bootの起動を待たずにテストができる。
