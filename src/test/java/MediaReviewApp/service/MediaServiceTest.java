@@ -21,10 +21,10 @@ import MediaReviewApp.repository.MediaRepository;
 @ExtendWith(MockitoExtension.class) // Mockitoを使うための宣言
 class MediaServiceTest {
 
-    @Mock // MediaRepositoryの偽物を作る
+    @Mock // MediaRepositoryの偽物を作る（すべてのメソッドの中身が消去された状態）
     private MediaRepository mediaRepository;
 
-    @InjectMocks // Repositoryは偽物、Serviceは本物
+    @InjectMocks // Repositoryは偽物、Serviceは本物、これで純粋にサービスのテストだけができる
     private MediaService mediaService;
 
     @Test
@@ -38,7 +38,7 @@ class MediaServiceTest {
         mediaService.save(media);
 
         // 3. 検証：mediaRepository.save() が、この media を引数に1回呼ばれたか？
-        verify(mediaRepository, times(1)).save(media);
+        verify(mediaRepository, times(1)).saveAndFlush(media);
     }
 
     @Test
@@ -69,11 +69,17 @@ class MediaServiceTest {
     }
 
     @Test
+    @DisplayName("存在しないIDを検索した時にエラーが投げられること")
+    void testFindByIdNotFound() {
+        // 存在しないであろうIDを指定してRuntimeExceptionが投げられることを検証する
+        assertThrows(RuntimeException.class, () -> mediaService.findById(999L));
+    }
+
+    @Test
     @DisplayName("IDを指定してステータスを更新できるか")
     void testUpdateStatus() {
-        // 1. 準備
+        // 準備
         Long targetId = 100L;
-        String newStatus = "DONE";
 
         // 偽物のデータ（更新前）を用意
         Media mockMedia = new Media();
@@ -81,12 +87,11 @@ class MediaServiceTest {
         mockMedia.setTitle("テスト映画");
         mockMedia.setStatus("WANT"); // 最初はWANT
 
-        // 準備：findByIdされたら、この偽物データを返しなさい
-        // ※ Optional.of(...) で包むのがポイントです
+        // findByIdされたら、この偽物データを返せ
         when(mediaRepository.findById(targetId)).thenReturn(java.util.Optional.of(mockMedia));
 
         // 2. 実行 (Act)
-        mediaService.updateStatus(targetId, newStatus);
+        mediaService.updateStatus(targetId, "DONE");
 
         // 3. 検証 (Assert)
         // ① ちゃんとステータスが "DONE" に書き換えられたか？
@@ -114,15 +119,10 @@ class MediaServiceTest {
 
         when(mediaRepository.existsById(targetId)).thenReturn(true);
 
+        // 実行
         mediaService.delete(targetId);
 
+        // 検証
         verify(mediaRepository, times(1)).deleteById(targetId);
-    }
-
-    @Test
-    @DisplayName("存在しないIDを検索した時にエラーが投げられること")
-    void testFindByIdNotFound() {
-        // 存在しないであろうIDを指定してRuntimeExceptionが投げられることを検証する
-        assertThrows(RuntimeException.class, () -> mediaService.findById(999L));
     }
 }
