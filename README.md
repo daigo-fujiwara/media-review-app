@@ -53,12 +53,12 @@
    - 環境変数: TMDB_API_KEY
    - ドキュメント: [TMDB API Documentation](https://developer.themoviedb.org/docs/getting-started)
 3. iTunes API
-   - 用途: 指定したキーワード（曲名、アーティスト名、アルバム名）に関連するジャケット画像（アートワーク）、視聴URL、メタデータを取得するために使用。
+   - 用途: 指定したキーワード（曲名、アーティスト名、アルバム名）に関連するジャケット画像（アートワーク）、視聴URL、メタデータを取得
    - 認証: 不要
    - 環境変数: 不要
    - ドキュメント: [iTunes Search API 公式ドキュメント](https://performance-partners.apple.com/search-api)
 4. RAWG API
-   - 用途: ジャンル GAME のビジュアル画像（背景画像/background_image）の取得に使用。
+   - 用途: ジャンル GAME のビジュアル画像（背景画像/background_image）の取得
    - 認証: APIキー方式
    - 環境変数: RAWG_API_KEY
    - ドキュメント: [RAWG API Documentation](https://rawg.io/apidocs)
