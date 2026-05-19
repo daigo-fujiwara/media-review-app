@@ -99,10 +99,10 @@
                         <div class="col-md-2">
                             <label for="ratingInput" class="form-label">評価</label>
                             <select id="ratingInput" name="rating" class="form-select">
-                                <option value="0">評価なし</option>
+                                <option value="0" selected>評価なし</option>
                                 <option value="5">★★★★★</option>
                                 <option value="4">★★★★</option>
-                                <option value="3" selected>★★★</option>
+                                <option value="3">★★★</option>
                                 <option value="2">★★</option>
                                 <option value="1">★</option>
                             </select>
@@ -249,7 +249,17 @@
         const titleInput = document.getElementById('titleInput');
         const typeSelect = document.getElementById('typeSelect');
         const suggestionList = document.getElementById('suggestionList');
+        const statusSelect = document.getElementById('statusSelect');
+        const reviewFields = document.getElementById('reviewFields');
         let debounceTimer;
+
+        statusSelect.addEventListener('change', function() {
+            if (this.value === 'DONE') {
+                reviewFields.style.display = 'block'; // レビューなら表示
+            } else {
+                reviewFields.style.display = 'none';  // 気になるリストなら非表示
+            }
+        });
 
         function executeSearch() {
             const query = titleInput.value;
