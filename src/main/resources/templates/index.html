@@ -14,16 +14,19 @@
 <body>
     <div class="container mt-4">
 
-        <!-- 分離しているウェルカムポップアップの要素を呼び出す -->
+        <!-- 画面要素0　分離しているウェルカムポップアップの要素を呼び出す -->
         <div th:replace="~{fragments/welcome-modal :: welcomePopup}"></div>
 
+        <!-- 画面要素1 -->
         <h1>メディアレビューアプリ</h1>
 
-        <!-- 分離している通知エリアを呼び出す -->
+        <!-- 画面要素1.5　分離している通知エリアを呼び出す -->
         <div th:replace="~{fragments/alert :: commonAlert}"></div>
 
+        <!-- 画面要素2 -->
         <div th:replace="~{fragments/form-card :: registerForm}"></div>
 
+        <!-- 画面要素3 -->
         <div th:replace="~{fragments/media-list-section :: mediaList}"></div>
 
     </div>
