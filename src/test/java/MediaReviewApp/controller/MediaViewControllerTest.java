@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MediaViewControllerTest {
