@@ -26,7 +26,6 @@ function executeSearch() {
         return;
     }
 
-    // 全タイプ対応の新しいエンドポイント（想定）を叩く
     fetch(`/candidate?query=${encodeURIComponent(query)}&type=${type}`)
         .then(response => response.json())
         .then(data => displaySuggestions(data));
@@ -46,7 +45,6 @@ function displaySuggestions(data) {
         button.type = 'button';
         button.className = 'list-group-item list-group-item-action d-flex align-items-center gap-2';
 
-        // 💡 MediaCandidate(title, imageUrl, releaseDate) のフィールド名に合わせる
         button.innerHTML = `
                 <img src="${item.imageUrl || '/images/no-image.png'}" style="width: 40px; height: 55px; object-fit: cover;" alt="">
                 <div class="text-start">
