@@ -6,13 +6,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
     <!-- 分離しているウェルカムポップアップのstyleを呼び出す -->
     <th:block th:replace="~{fragments/welcome-modal :: welcomeStyle}"></th:block>
 
     <!-- ウェルカムポップアップ以外のstyleを呼び出す -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
-<body>
+<body class="bg-dark text-light">
     <div class="container mt-4">
 
         <!-- 画面の各要素はfragmentsディレクトリに収納してある -->

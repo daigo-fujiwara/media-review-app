@@ -2,12 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <body>
 
-<div th:fragment="mediaList" class="row">
-
-    <div class="col-12 col-md-6 mb-4">
+<div th:fragment="mediaList" class="row tab-content" id="mediaTabContent">
+    <div class="col-12 d-md-none mb-3">
+        <ul class="nav nav-pills nav-justified bg-secondary p-1 rounded-pill" id="mediaTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active rounded-pill fw-bold" id="want-tab" data-bs-toggle="tab" data-bs-target="#want-panel" type="button" role="tab" aria-controls="want-panel" aria-selected="true">気になるリスト</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link rounded-pill fw-bold" id="done-tab" data-bs-toggle="tab" data-bs-target="#done-panel" type="button" role="tab" aria-controls="done-panel" aria-selected="false">レビュー</button>
+            </li>
+        </ul>
+    </div>
+    <div class="tab-pane show active col-12 col-md-6 d-md-block mb-4" id="want-panel" role="tabpanel" aria-labelledby="want-tab">
         <div class="media-column">
             <h4 class="text-secondary">気になるリスト</h4>
-            <div th:each="item : ${wantList}" class="card shadow-sm mb-3">
+            <div th:each="item : ${wantList}" class="card bg-dark text-white border border-secondary shadow-sm mb-3">
                 <div class="card-body media-card-body"> <div class="poster-container">
                     <img th:if="${item.imageUrl != null}"
                          th:src="${item.imageUrl}"
@@ -21,12 +30,12 @@
                 </div>
 
                     <div class="content-container">
-                            <span class="badge bg-secondary text-white">
-                                <span th:if="${item.type == 'MOVIE'}">🎬</span>
-                                <span th:if="${item.type == 'DRAMA'}">🎭</span>
-                                <span th:if="${item.type == 'BOOK'}">📖</span>
-                                <span th:if="${item.type == 'MUSIC'}">🎵</span>
-                                <span th:if="${item.type == 'GAME'}">🎮</span>
+                            <span class="badge border border-light text-light">
+                                <i th:if="${item.type == 'MOVIE'}" class="bi bi-film me-1"></i>
+                                <i th:if="${item.type == 'DRAMA'}" class="bi bi-masks me-1"></i>
+                                <i th:if="${item.type == 'BOOK'}" class="bi bi-book me-1"></i>
+                                <i th:if="${item.type == 'MUSIC'}" class="bi bi-music-note-beamed me-1"></i>
+                                <i th:if="${item.type == 'GAME'}" class="bi bi-controller me-1"></i>
                                 <span th:text="${item.type}">TYPE</span>
                             </span>
                         <h5 class="card-title mt-1 mb-1" th:text="${item.title}" style="font-size: 1.1rem;">タイトル</h5>
@@ -85,11 +94,10 @@
             </div>
         </div>
     </div>
-
-    <div class="col-12 col-md-6">
+    <div class="tab-pane show col-12 col-md-6 d-md-block" id="done-panel" role="tabpanel" aria-labelledby="done-tab">
         <div class="media-column">
             <h4 class="text-success">レビュー</h4>
-            <div th:each="item : ${doneList}" class="card shadow-sm mb-3">
+            <div th:each="item : ${doneList}" class="card bg-dark text-white border border-secondary shadow-sm mb-3">
                 <div class="card-body media-card-body"> <div class="poster-container">
                     <img th:if="${item.imageUrl != null}"
                          th:src="${item.imageUrl}"
@@ -103,30 +111,28 @@
                 </div>
 
                     <div class="content-container">
-                            <span class="badge bg-secondary text-white">
-                                <span th:if="${item.type == 'MOVIE'}">🎬</span>
-                                <span th:if="${item.type == 'DRAMA'}">🎭</span>
-                                <span th:if="${item.type == 'BOOK'}">📖</span>
-                                <span th:if="${item.type == 'MUSIC'}">🎵</span>
-                                <span th:if="${item.type == 'GAME'}">🎮</span>
+                            <span class="badge border border-light text-light">
+                                <i th:if="${item.type == 'MOVIE'}" class="bi bi-film me-1"></i>
+                                <i th:if="${item.type == 'DRAMA'}" class="bi bi-masks me-1"></i>
+                                <i th:if="${item.type == 'BOOK'}" class="bi bi-book me-1"></i>
+                                <i th:if="${item.type == 'MUSIC'}" class="bi bi-music-note-beamed me-1"></i>
+                                <i th:if="${item.type == 'GAME'}" class="bi bi-controller me-1"></i>
                                 <span th:text="${item.type}">TYPE</span>
                             </span>
                         <h5 class="card-title mt-1 mb-0" th:text="${item.title}">タイトル</h5>
                         <p class="text-warning mb-1">
                             <span th:if="${item.rating != null and item.rating > 0}" th:text="${#strings.repeat('★', item.rating)}"></span>
                         </p>
-                        <p class="card-text small text-muted mb-2" th:text="${item.comment}"></p>
+                        <p class="card-text small text-light mb-2" th:text="${item.comment}"></p>
                         <form th:action="@{/delete}" method="post" class="text-end">
                             <input type="hidden" name="id" th:value="${item.id}">
-                            <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('Are you sure?')">削除</button>
+                            <button type="submit" class="btn btn-sm btn-link text-danger p-0" onclick="return confirm('本当に削除しますか？')">削除</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </div>
-
 </body>
 </html>

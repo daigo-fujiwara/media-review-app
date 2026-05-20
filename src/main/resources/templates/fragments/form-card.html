@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <body>
-<div th:fragment="registerForm" class="card p-3 mb-4">
+<div th:fragment="registerForm" class="card bg-secondary text-white p-3 mb-4">
     <h5>気になるリスト登録 / レビュー登録</h5>
     <form th:action="@{/save}" method="post" class="row g-3 align-items-end"
           onsubmit="this.querySelector('button[type=submit]').disabled=true;">
 
         <div class="col-md-4">
-            <label for="statusSelect" class="form-label">ステータス</label>
+            <label for="statusSelect" class="form-label text-light">ステータス</label>
             <select name="status" id="statusSelect" class="form-select">
                 <option value="WANT">気になるリスト</option>
                 <option value="DONE">レビュー</option>
@@ -15,7 +15,7 @@
         </div>
 
         <div class="col-md-4">
-            <label for="typeSelect" class="form-label">タイプ</label>
+            <label for="typeSelect" class="form-label text-light">タイプ</label>
             <select id="typeSelect" name="type" class="form-select">
                 <option value="MOVIE">映画</option>
                 <option value="DRAMA">ドラマ</option>
@@ -26,7 +26,7 @@
         </div>
 
         <div class="col-md-4">
-            <label for="titleInput" class="form-label">タイトル</label>
+            <label for="titleInput" class="form-label text-light">タイトル</label>
             <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトルを入力" required>
             <div id="suggestionList" class="list-group position-absolute w-100 shadow" style="z-index: 1000; display: none;"></div>
         </div>
@@ -34,7 +34,7 @@
         <div id="reviewFields" class="col-12 mt-3">
             <div class="row g-2">
                 <div class="col-md-2">
-                    <label for="ratingInput" class="form-label">評価</label>
+                    <label for="ratingInput" class="form-label text-light">評価</label>
                     <select id="ratingInput" name="rating" class="form-select">
                         <option value="0" selected>評価なし</option>
                         <option value="5">★★★★★</option>
@@ -45,14 +45,14 @@
                     </select>
                 </div>
                 <div class="col-md-10">
-                    <label for="commentInput" class="form-label">レビュー</label>
+                    <label for="commentInput" class="form-label text-light">レビュー</label>
                     <textarea id="commentInput" name="comment" class="form-control" placeholder="感想をどうぞ" rows="2"></textarea>
                 </div>
             </div>
         </div>
 
         <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-primary w-100">リストに追加する</button>
+            <button type="submit" class="btn btn-info text-dark fw-bold w-100">追加する</button>
         </div>
     </form>
 </div>

@@ -38,3 +38,15 @@
 .content-container {
     flex-grow: 1; /* 残りのスペースをすべて使う */
 }
+
+.nav-pills#mediaTab .programmatic-tab-active-class-override .nav-link.active {
+    background-color: #0dcaf0 !important; /* 鮮やかなティール（ネオン） */
+    color: #000000 !important;            /* 文字をクッキリ黒にして視認性アップ */
+    box-shadow: 0 0 10px #0dcaf0 !important; /* ほんのりネオン風に発光させる隠し味 */
+}
+
+/* 💡 選択されていないボタンの文字を優しい白にする */
+.nav-pills#mediaTab .nav-link:not(.active) {
+    color: #f8f9fa !important;
+    background: transparent !important;
+}
