@@ -31,7 +31,7 @@ public class RawgService {
             JsonNode results = root.path("results");
 
             if (results.isArray() && !results.isEmpty()) {
-                // background_image がゲームのメインビジュアルURLです
+                // background_image がゲームのメインビジュアルURL
                 return results.get(0).path("background_image").asString();
             }
         } catch (Exception e) {

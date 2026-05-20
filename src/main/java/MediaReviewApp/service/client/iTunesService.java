@@ -29,7 +29,7 @@ public class iTunesService {
             JsonNode results = root.path("results");
 
             if (results.isArray() && !results.isEmpty()) {
-                // artworkUrl100 がアルバムジャケット（100x100）のURLです
+                // artworkUrl100 がアルバムジャケット（100x100）のURL
                 return results.get(0).path("artworkUrl100").asString();
             }
         } catch (Exception e) {
@@ -50,10 +50,8 @@ public class iTunesService {
             String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
             String url = SEARCH_URL + encodedQuery + "&entity=song&attribute=songTerm&limit=5&country=jp&lang=ja_jp";
 
-            // 🚀 1. 一度 String として生のデータをすべて受け取る（型変換エラーが起きない）
             String rawJson = restTemplate.getForObject(url, String.class);
 
-            // 🚀 2. 文字列(JSON)を Jackson で解析する
             JsonNode root = mapper.readTree(rawJson);
             JsonNode results = root.get("results");
 

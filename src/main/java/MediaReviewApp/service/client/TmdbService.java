@@ -46,7 +46,6 @@ public class TmdbService {
 
             /// response、results、およびリストの空チェックを一気に行う
             if (response != null && response.results() != null && !response.results().isEmpty()) {
-                // getFirst()の代わりに、より汎用的な get(0) を使用
                 String path = response.results().getFirst().posterPath();
 
                 if (path != null) {
@@ -54,7 +53,6 @@ public class TmdbService {
                 }
             }
         } catch (Exception e) {
-            // 実務ではスタックトレースもログに残すのが一般的です
             log.error("TMDB連携エラー: {} / Title: {}", e.getMessage(), title, e);
         }
         return null;
@@ -74,7 +72,6 @@ public class TmdbService {
                 + "&query=" + query + "&language=ja-JP";
 
         try {
-            // 修正ポイント：二重定義（String response = ...）を1つに整理
             String response = restTemplate.getForObject(url, String.class);
             JsonNode root = objectMapper.readTree(response);
             JsonNode results = root.get("results");
@@ -88,7 +85,6 @@ public class TmdbService {
                 for (int i = 0; i < Math.min(results.size(), 5); i++) {
                     JsonNode node = results.get(i);
 
-                    // 💡 修正ポイント1：ドラマなら "name"、映画なら "title" を取得する
                     String titleKey = "tv".equals(category) ? "name" : "title";
                     String title = node.has(titleKey) ? node.get(titleKey).asString() : "不明なタイトル";
 
@@ -98,7 +94,6 @@ public class TmdbService {
                         path = "https://image.tmdb.org/t/p/w200" + node.get("poster_path").asString();
                     }
 
-                    // 💡 修正ポイント2：ドラマなら "first_air_date"、映画なら "release_date" を取得する
                     String dateKey = "tv".equals(category) ? "first_air_date" : "release_date";
                     String releaseDate = node.has(dateKey) ? node.get(dateKey).asString() : "-";
 

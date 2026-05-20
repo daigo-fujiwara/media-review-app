@@ -77,7 +77,6 @@ public class GoogleBooksService {
                 for (var item : response.items()) {
                     var info = item.volumeInfo();
 
-                    // .replace() を削除。三項演算子も1行でスッキリさせます
                     String imageUrl = (info.imageLinks() != null) ? info.imageLinks().thumbnail() : null;
 
                     // フロントエンドが必要とする形式に詰め替え
