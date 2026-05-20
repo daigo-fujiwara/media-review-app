@@ -1,9 +1,6 @@
-const titleInput = document.getElementById('titleInput');
-const typeSelect = document.getElementById('typeSelect');
-const suggestionList = document.getElementById('suggestionList');
+// ステータスをレビューにしたら星とコメントのフィールドが表示される
 const statusSelect = document.getElementById('statusSelect');
 const reviewFields = document.getElementById('reviewFields');
-let debounceTimer;
 
 statusSelect.addEventListener('change', function() {
     if (this.value === 'DONE') {
@@ -12,6 +9,12 @@ statusSelect.addEventListener('change', function() {
         reviewFields.style.display = 'none';  // 気になるリストなら非表示
     }
 });
+
+// タイプを選んだりタイトルを入力すると候補がサジェストされる
+const titleInput = document.getElementById('titleInput');
+const typeSelect = document.getElementById('typeSelect');
+const suggestionList = document.getElementById('suggestionList');
+let debounceTimer;
 
 function executeSearch() {
     const query = titleInput.value;
