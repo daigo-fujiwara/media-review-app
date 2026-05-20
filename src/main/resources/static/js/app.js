@@ -29,7 +29,6 @@ function executeSearch() {
         .then(data => displaySuggestions(data));
 }
 
-// index.html の末尾に追加
 function displaySuggestions(data) {
     const suggestionList = document.getElementById('suggestionList');
     suggestionList.innerHTML = ''; // リストをリセット
