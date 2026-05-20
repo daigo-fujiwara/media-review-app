@@ -3,7 +3,6 @@
 <head>
     <th:block th:fragment="welcomeStyle">
         <style>
-            /* ウェルカムポップアップのスタイル */
             .welcome-overlay {
                 position: fixed;
                 top: 0;
@@ -65,12 +64,9 @@
         </div>
 
         <script>
-            // 💡 修正ポイント：関数や処理の外（一番上）で各要素をしっかりと捕まえる
-            const welcomeOverlay = document.getElementById('welcomeModalOverlay'); // ★この1行を追加！
+            const welcomeOverlay = document.getElementById('welcomeModalOverlay');
             const closeWelcomeBtn = document.getElementById('closeWelcomeBtn');
             const startAppBtn = document.getElementById('startAppBtn');
-
-            // ローカルストレージに「訪問済みフラグ」があるか確認
             const hasVisited = localStorage.getItem('hasVisitedMediaApp');
 
             if (!hasVisited) {
@@ -81,7 +77,6 @@
             // ポップアップを閉じる共通の関数
             function closeWelcomeModal() {
                 welcomeOverlay.style.display = 'none';
-                // 閉じた瞬間に「もう見たよ」というフラグをブラウザに保存する
                 localStorage.setItem('hasVisitedMediaApp', 'true');
             }
 
