@@ -1,4 +1,4 @@
-// ステータスをレビューにしたら星とコメントのフィールドが表示される
+// UIインタラクション1：ステータスをレビューにしたら星とコメントのフィールドが表示される
 const statusSelect = document.getElementById('statusSelect');
 const reviewFields = document.getElementById('reviewFields');
 
@@ -10,11 +10,21 @@ statusSelect.addEventListener('change', function() {
     }
 });
 
-// タイプを選んだりタイトルを入力すると候補がサジェストされる
+// UIインタラクション2：タイプを選んだりタイトルを入力すると候補がサジェストされる
 const titleInput = document.getElementById('titleInput');
 const typeSelect = document.getElementById('typeSelect');
 const suggestionList = document.getElementById('suggestionList');
 let debounceTimer;
+
+typeSelect.addEventListener('change', function() {
+    titleInput.focus(); // タイトル欄にフォーカス
+    executeSearch();    // すぐに再検索
+});
+
+titleInput.addEventListener('input', function() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(executeSearch, 300);
+});
 
 function executeSearch() {
     const query = titleInput.value;
@@ -62,13 +72,3 @@ function displaySuggestions(data) {
 
     suggestionList.style.display = 'block';
 }
-
-titleInput.addEventListener('input', function() {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(executeSearch, 300);
-});
-
-typeSelect.addEventListener('change', function() {
-    titleInput.focus(); // タイトル欄にフォーカス
-    executeSearch();    // すぐに再検索
-});
