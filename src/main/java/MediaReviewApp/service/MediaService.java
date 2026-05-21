@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor // コンストラクタを自分で書く必要がなくなる
+@RequiredArgsConstructor // lombokというライブラリのおかげでコンストラクタを自分で書く必要がなくなる
 @Transactional // エラーが起きた時にデータの整合性を守る（ロールバック）
 public class MediaService {
 
