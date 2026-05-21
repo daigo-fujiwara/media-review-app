@@ -24,9 +24,9 @@ public class iTunesService {
     public String fetchAlbumArtUrl(String title) {
         try {
             // スペースや日本語を「%20」や「%E7%B1%B3...」などの安全な文字に変換する
-            String encodedQuery = URLEncoder.encode(title, StandardCharsets.UTF_8);
+            String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
             // 日本のiTunesストアからアルバムを1件だけ検索するURL
-            String url = "https://itunes.apple.com/search?term=" + encodedQuery + "&entity=album&limit=1&country=jp";
+            String url = "https://itunes.apple.com/search?term=" + encodedTitle + "&entity=album&limit=1&country=jp";
 
             log.info("【デバッグ】1件だけ検索するiTunes APIのリクエストURL: {}", url);
 
@@ -45,6 +45,7 @@ public class iTunesService {
         } catch (Exception e) {
             System.err.println("iTunes API連携エラー: " + e.getMessage());
         }
+
         return null;
     }
 
@@ -81,7 +82,6 @@ public class iTunesService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("iTunes 検索エラー: " + e.getMessage());
             log.error("iTunes 検索中にエラーが発生しました。クエリ: {}", query, e);
         }
 

@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +18,13 @@ import java.util.List;
 @Service
 public class TmdbService {
 
-    public record TmdbResponse(
-            List<TmdbResult> results
-    ) {}
+    // これでHTTPリクエストを実行する
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    // String型（つまり文字列）のJSONはそのままだと扱いにくいためこれを使ってオブジェクトにして操作しやすくする。
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public record TmdbResponse(List<TmdbResult> results) {}
 
     public record TmdbResult(
             @JsonProperty("poster_path") String posterPath
@@ -34,19 +41,23 @@ public class TmdbService {
 
         if ("none".equals(apiKey)) return null;
 
-        RestTemplate restTemplate = new RestTemplate();
         // 映画なら "movie"、ドラマなら "tv" で検索
         String category = "MOVIE".equals(mediaType) ? "movie" : "tv";
 
         try {
-            String url = String.format("%s/search/%s?api_key=%s&query=%s&language=ja",
-                    BASE_URL, category, apiKey, title);
+            // スペースや日本語を「%20」や「%E7%B1%B3...」などの安全な文字に変換する
+            String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
 
-            TmdbResponse response = restTemplate.getForObject(url, TmdbResponse.class);
+            String url = String.format("%s/search/%s?api_key=%s&query=%s&language=ja", BASE_URL, category, apiKey, encodedTitle);
 
-            /// response、results、およびリストの空チェックを一気に行う
-            if (response != null && response.results() != null && !response.results().isEmpty()) {
-                String path = response.results().getFirst().posterPath();
+            log.info("【デバッグ】1件だけ検索するTMDB APIのリクエストURL: {}", url);
+
+            // ここでREST APIを叩く！
+            TmdbResponse jsonResponse = restTemplate.getForObject(url, TmdbResponse.class);
+
+            // response、results、およびリストの空チェックを一気に行う
+            if (jsonResponse != null && jsonResponse.results() != null && !jsonResponse.results().isEmpty()) {
+                String path = jsonResponse.results().getFirst().posterPath();
 
                 if (path != null) {
                     return IMAGE_BASE_URL + path;
@@ -59,29 +70,25 @@ public class TmdbService {
     }
 
     public List<MediaCandidateDto> searchMovieDrama(String query, String type) {
-
-        // フィールドではなく、メソッド内で RestTemplate を生成（またはクラス上部で定義）
-        RestTemplate restTemplate = new RestTemplate();
-        // ObjectMapper も必要なのでインポートに合わせて生成
-        tools.jackson.databind.ObjectMapper objectMapper = new tools.jackson.databind.ObjectMapper();
-
-        // 映画なら "movie"、ドラマなら "tv" にカテゴリを切り替える
-        String category = "DRAMA".equals(type) ? "tv" : "movie";
-
-        String url = "https://api.themoviedb.org/3/search/" + category + "?api_key=" + apiKey
-                + "&query=" + query + "&language=ja-JP";
+        List<MediaCandidateDto> candidates = new ArrayList<>();
 
         try {
+            // スペースや日本語を「%20」や「%E7%B1%B3...」などの安全な文字に変換する
+            String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+
+            // 映画なら "movie"、ドラマなら "tv" にカテゴリを切り替える
+            String category = "DRAMA".equals(type) ? "tv" : "movie";
+
+            String url = "https://api.themoviedb.org/3/search/" + category + "?api_key=" + apiKey + "&query=" + encodedQuery + "&language=ja-JP";
+
+            log.info("【デバッグ】5件検索するTMDB APIのリクエストURL: {}", url);
+
+            // ここでREST APIを叩く！
             String response = restTemplate.getForObject(url, String.class);
-            JsonNode root = objectMapper.readTree(response);
+            JsonNode root = mapper.readTree(response);
             JsonNode results = root.get("results");
 
-            List<MediaCandidateDto> candidates = new ArrayList<>();
-
             if (results != null && results.isArray()) {
-                // 最大5件まで抽出
-                // TmdbService.java のループ内を修正
-
                 for (int i = 0; i < Math.min(results.size(), 5); i++) {
                     JsonNode node = results.get(i);
 
@@ -100,10 +107,10 @@ public class TmdbService {
                     candidates.add(new MediaCandidateDto(title, path, releaseDate, type));
                 }
             }
-            return candidates;
         } catch (Exception e) {
-            log.error("検索候補の取得中にエラーが発生しました: {}", e.getMessage());
-            return new ArrayList<>();
+            log.error("TMDB 検索中にエラーが発生しました。クエリ: {}", query, e);
         }
+
+        return candidates;
     }
 }
