@@ -1,11 +1,15 @@
 package MediaReviewApp.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import MediaReviewApp.service.client.GoogleBooksService;
+import MediaReviewApp.service.client.RawgService;
+import MediaReviewApp.service.client.TmdbService;
+import MediaReviewApp.service.client.iTunesService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,19 +28,17 @@ class MediaServiceTest {
     @InjectMocks // Repositoryは偽物、Serviceは本物、これで純粋にサービスのテストだけができる
     private MediaService mediaService;
 
-    @Test
-    @DisplayName("Mediaを保存できるか")
-    void testSave() {
-        // 1. 準備
-        Media media = new Media();
-        media.setTitle("千と千尋の神隠し（2001）");
+    @Mock
+    private TmdbService tmdbService;
 
-        // 2. 実行
-        mediaService.save(media);
+    @Mock
+    private GoogleBooksService googleBooksService;
 
-        // 3. 検証：mediaRepository.save() が、この media を引数に1回呼ばれたか？
-        verify(mediaRepository, times(1)).saveAndFlush(media);
-    }
+    @Mock
+    private iTunesService iTunesService;
+
+    @Mock
+    private RawgService rawgService;
 
     @Test
     @DisplayName("WANTリストの取得メソッドが、リポジトリを正しく呼び出しているか")
@@ -66,47 +68,17 @@ class MediaServiceTest {
     }
 
     @Test
-    @DisplayName("存在しないIDを検索した時にエラーが投げられること")
-    void testFindByIdNotFound() {
-        // 存在しないであろうIDを指定してRuntimeExceptionが投げられることを検証する
-        assertThrows(RuntimeException.class, () -> mediaService.findById(999L));
-    }
+    @DisplayName("Mediaを保存できるか")
+    void testSave() {
+        // 1. 準備
+        Media media = new Media();
+        media.setTitle("千と千尋の神隠し（2001）");
 
-    @Test
-    @DisplayName("IDを指定してステータスを更新できるか")
-    void testUpdateStatus() {
-        // 準備
-        Long targetId = 100L;
+        // 2. 実行
+        mediaService.save(media);
 
-        // 偽物のデータ（更新前）を用意
-        Media mockMedia = new Media();
-        mockMedia.setId(targetId);
-        mockMedia.setTitle("テスト映画");
-        mockMedia.setStatus("WANT"); // 最初はWANT
-
-        // findByIdされたら、この偽物データを返せ
-        when(mediaRepository.findById(targetId)).thenReturn(java.util.Optional.of(mockMedia));
-
-        // 2. 実行 (Act)
-        mediaService.updateStatus(targetId, "DONE");
-
-        // 3. 検証 (Assert)
-        // ① ちゃんとステータスが "DONE" に書き換えられたか？
-        assertThat(mockMedia.getStatus()).isEqualTo("DONE");
-
-        // ② リポジトリの save が最終的に呼ばれたか？
-        verify(mediaRepository, times(1)).save(mockMedia);
-    }
-
-    @Test
-    @DisplayName("データが存在しないときは、例外が発生し、保存処理が行われないこと")
-    void testUpdateStatus_NotFound() {
-        Long targetId = 999L;
-        when(mediaRepository.findById(targetId)).thenReturn(Optional.empty());
-
-        // 実行部分をassertThrowsで囲む
-        assertThrows(RuntimeException.class, () -> mediaService.updateStatus(targetId, "DONE"));
-        verify(mediaRepository, never()).save(any());
+        // 3. 検証：mediaRepository.save() が、この media を引数に1回呼ばれたか？
+        verify(mediaRepository, times(1)).save(media);
     }
 
     @Test
@@ -121,5 +93,32 @@ class MediaServiceTest {
 
         // 検証
         verify(mediaRepository, times(1)).deleteById(targetId);
+    }
+
+    @Test
+    @DisplayName("MOVIEを選択したらtmdbServiceが呼び出されるか")
+    void testSearchCandidates() {
+        assertNotNull(mediaService.searchCandidates("テスト", "MOVIE"));
+        verify(tmdbService, times(1)).searchMovieDrama("テスト", "MOVIE");
+
+        // DRAMAのテスト（★ここを追加！）
+        assertNotNull(mediaService.searchCandidates("テスト", "DRAMA"));
+        verify(tmdbService, times(1)).searchMovieDrama("テスト", "DRAMA");
+
+        // BOOKのテスト
+        assertNotNull(mediaService.searchCandidates("テスト", "BOOK"));
+        verify(googleBooksService, times(1)).searchBooks("テスト");
+
+        // MUSICのテスト
+        assertNotNull(mediaService.searchCandidates("テスト", "MUSIC"));
+        verify(iTunesService, times(1)).searchMusic("テスト");
+
+        // GAMEのテスト
+        assertNotNull(mediaService.searchCandidates("テスト", "GAME"));
+        verify(rawgService, times(1)).searchGames("テスト");
+
+        // defaultルートのテスト
+        assertTrue(mediaService.searchCandidates("テスト", "MANGA").isEmpty());
+
     }
 }

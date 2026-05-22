@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +21,8 @@ public class iTunesService {
 
     public String fetchAlbumArtUrl(String title) {
         try {
-            // スペースや日本語を「%20」や「%E7%B1%B3...」などの安全な文字に変換する
-            String encodedTitle = URLEncoder.encode(title, StandardCharsets.UTF_8);
             // 日本のiTunesストアからアルバムを1件だけ検索するURL
-            String url = "https://itunes.apple.com/search?term=" + encodedTitle + "&entity=album&limit=1&country=jp";
+            String url = "https://itunes.apple.com/search?term=" + title + "&entity=album&limit=1&country=jp";
 
             log.info("【デバッグ】1件だけ検索するiTunes APIのリクエストURL: {}", url);
 
@@ -53,9 +49,7 @@ public class iTunesService {
         List<MediaCandidateDto> candidates = new ArrayList<>();
 
         try {
-            // 日本語のクエリをURLエンコードする
-            String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-            String url = "https://itunes.apple.com/search?term=" + encodedQuery + "&entity=song&attribute=songTerm&limit=5&country=jp&lang=ja_jp";
+            String url = "https://itunes.apple.com/search?term=" + query + "&entity=song&attribute=songTerm&limit=5&country=jp&lang=ja_jp";
 
             log.info("【デバッグ】5件検索するiTunes APIのリクエストURL: {}", url);
 
@@ -63,6 +57,8 @@ public class iTunesService {
             String rawJson = restTemplate.getForObject(url, String.class);
             JsonNode root = mapper.readTree(rawJson);
             JsonNode results = root.get("results");
+
+            log.info("【デバッグ】5件検索するiTunes APIの検索結果: {}", results);
 
             if (results != null && results.isArray()) {
                 for (JsonNode node : results) {
