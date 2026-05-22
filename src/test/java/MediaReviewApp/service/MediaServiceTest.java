@@ -101,7 +101,7 @@ class MediaServiceTest {
         assertNotNull(mediaService.searchCandidates("テスト", "MOVIE"));
         verify(tmdbService, times(1)).searchMovieDrama("テスト", "MOVIE");
 
-        // DRAMAのテスト（★ここを追加！）
+        // DRAMAのテスト
         assertNotNull(mediaService.searchCandidates("テスト", "DRAMA"));
         verify(tmdbService, times(1)).searchMovieDrama("テスト", "DRAMA");
 
