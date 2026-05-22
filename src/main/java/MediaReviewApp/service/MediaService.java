@@ -51,18 +51,18 @@ public class MediaService {
         mediaRepository.saveAndFlush(media);
     }
 
-    // 下にあるupdateStatusメソッドと合わせてステータス更新
-    public Media findById(Long id) {
-        return mediaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("データが見つかりませんでした。ID: " + id));
-    }
-
+    // 下にあるfindByIdメソッドと合わせてステータス更新
     public void updateStatus(Long id, String status) {
         // findByIdがエラーを投げてくれるので、ここでは正常系（見つかった場合）のことだけ書く
         Media media = findById(id);
         media.setStatus(status);
         media.setUpdatedAt(LocalDateTime.now());
         mediaRepository.save(media);
+    }
+
+    public Media findById(Long id) {
+        return mediaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("データが見つかりませんでした。ID: " + id));
     }
 
     // 削除
