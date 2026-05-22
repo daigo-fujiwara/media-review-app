@@ -19,7 +19,7 @@ public class MediaManageController {
     }
      */
 
-    // 登録処理
+    // 登録・変更処理
     @PostMapping("/save")
     public String save(Media media, RedirectAttributes redirectAttributes) {
         try {
@@ -29,18 +29,6 @@ public class MediaManageController {
             return "redirect:/";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "保存中にエラーが発生しました。");
-            return "redirect:/";
-        }
-    }
-
-    // ステータス変更（WANT -> DONE など）
-    @PostMapping("/update-status")
-    public String updateStatus(Long id, String status, RedirectAttributes redirectAttributes) {
-        try {
-            mediaService.updateStatus(id, status);
-            return "redirect:/";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "ステータスの更新に失敗しました。");
             return "redirect:/";
         }
     }

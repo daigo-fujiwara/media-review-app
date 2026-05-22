@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,21 +47,8 @@ public class MediaService {
             media.setImageUrl(rawgService.fetchGameImageUrl(media.getTitle()));
         }
 
-        mediaRepository.saveAndFlush(media);
-    }
-
-    // 下にあるfindByIdメソッドと合わせてステータス更新
-    public void updateStatus(Long id, String status) {
-        // findByIdがエラーを投げてくれるので、ここでは正常系（見つかった場合）のことだけ書く
-        Media media = findById(id);
-        media.setStatus(status);
-        media.setUpdatedAt(LocalDateTime.now());
+        // JpaRepositoryインターフェースのメソッド。エンティティが新規の場合は挿入され、既存の場合は更新される。
         mediaRepository.save(media);
-    }
-
-    public Media findById(Long id) {
-        return mediaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("データが見つかりませんでした。ID: " + id));
     }
 
     // 削除
