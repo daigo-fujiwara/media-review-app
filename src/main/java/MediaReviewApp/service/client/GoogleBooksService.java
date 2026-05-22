@@ -1,15 +1,19 @@
 package MediaReviewApp.service.client;
 
 import MediaReviewApp.dto.MediaCandidateDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j // ログを書くときに便利なlombokのライブラリ
 @Service
 public class GoogleBooksService {
+
+    // これでHTTPリクエストを実行する
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public record GoogleBooksResponse(List<Item> items) {
         public record Item(VolumeInfo volumeInfo) {}
@@ -33,15 +37,14 @@ public class GoogleBooksService {
     @SuppressWarnings("HttpUrlsUsage")
     public String fetchThumbnailUrl(String title) {
         // キーが設定されていない場合のガード
-        if ("none".equals(apiKey)) {
-            System.err.println("APIキーが設定されていないため、連携をスキップします。");
-            return null;
-        }
+        if ("none".equals(apiKey)) return null;
 
-        RestTemplate restTemplate = new RestTemplate();
         try {
             // URLの末尾に &key= を追加してリクエスト
             String url = GOOGLE_BOOKS_API_URL + title + "&key=" + apiKey;
+
+            log.info("【デバッグ】1件だけ検索するGoogle Books APIのリクエストURL: {}", url);
+
             GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
 
             if (response != null && response.items() != null && !response.items().isEmpty()) {
@@ -51,26 +54,25 @@ public class GoogleBooksService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("API連携エラー: " + e.getMessage());
+            log.error("Google Books 検索中にエラーが発生しました。クエリ: {}", title, e);
         }
+
         return null;
     }
 
-    /**
-     * タイトルから本の候補を複数検索する（サジェスト用）
-     */
-    public List<MediaCandidateDto> searchBooks(String title) {
+    public List<MediaCandidateDto> searchBooks(String query) {
+        List<MediaCandidateDto> candidates = new ArrayList<>();
 
         if ("none".equals(apiKey)) {
             return new ArrayList<>();
         }
 
-        RestTemplate restTemplate = new RestTemplate();
-        List<MediaCandidateDto> candidates = new ArrayList<>();
-
         try {
             // maxResults=5 を指定して、上位5件を取得するように調整
-            String url = GOOGLE_BOOKS_API_URL + title + "&maxResults=5&key=" + apiKey;
+            String url = GOOGLE_BOOKS_API_URL + query + "&maxResults=5&key=" + apiKey;
+
+            log.info("【デバッグ】5件検索するGoogle Books APIのリクエストURL: {}", url);
+
             GoogleBooksResponse response = restTemplate.getForObject(url, GoogleBooksResponse.class);
 
             if (response != null && response.items() != null) {
@@ -87,12 +89,11 @@ public class GoogleBooksService {
                             "BOOK"
                     ));
                 }
-            } else {
-                System.out.println("★データが空またはレスポンスがNULLです");
             }
         } catch (Exception e) {
-            System.err.println("Google Books 検索エラー: " + e.getMessage());
+            log.error("Google Books 検索中にエラーが発生しました。クエリ: {}", query, e);
         }
+
         return candidates;
     }
 }

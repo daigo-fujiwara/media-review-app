@@ -43,7 +43,7 @@ public class iTunesService {
                 return results.get(0).path("artworkUrl100").asString();
             }
         } catch (Exception e) {
-            System.err.println("iTunes API連携エラー: " + e.getMessage());
+            log.error("iTunes 検索中にエラーが発生しました。クエリ: {}", title, e);
         }
 
         return null;

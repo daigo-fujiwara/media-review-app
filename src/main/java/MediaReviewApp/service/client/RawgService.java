@@ -26,6 +26,9 @@ public class RawgService {
     private String apiKey;
 
     public String fetchGameImageUrl(String title) {
+        // キーが設定されていない場合のガード
+        if ("none".equals(apiKey)) return null;
+
         try {
             String url = "https://api.rawg.io/api/games?key=" + apiKey + "&search=" + title;
 
@@ -42,7 +45,7 @@ public class RawgService {
                 return results.get(0).path("background_image").asString();
             }
         } catch (Exception e) {
-            System.err.println("RAWG API連携エラー: " + e.getMessage());
+            log.error("RAWG 検索中にエラーが発生しました。クエリ: {}", title, e);
         }
 
         return null;
@@ -50,8 +53,6 @@ public class RawgService {
 
     public List<MediaCandidateDto> searchGames(String query) {
         List<MediaCandidateDto> candidates = new ArrayList<>();
-
-        System.out.println("★DEBUG: 現在使用中のAPIキー -> [" + apiKey + "]");
 
         try {
             String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
@@ -82,7 +83,7 @@ public class RawgService {
                 }
             }
         } catch (Exception e) {
-            System.err.println("RAWG 検索エラー: " + e.getMessage());
+            log.error("RAWG 検索中にエラーが発生しました。クエリ: {}", query, e);
         }
 
         return candidates;

@@ -64,8 +64,9 @@ public class TmdbService {
                 }
             }
         } catch (Exception e) {
-            log.error("TMDB連携エラー: {} / Title: {}", e.getMessage(), title, e);
+            log.error("TMDB 検索中にエラーが発生しました。クエリ: {}", title, e);
         }
+
         return null;
     }
 

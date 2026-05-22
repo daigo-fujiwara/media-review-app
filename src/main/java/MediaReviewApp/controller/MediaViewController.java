@@ -2,10 +2,12 @@ package MediaReviewApp.controller;
 
 import MediaReviewApp.service.MediaService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Slf4j // ログを書くときに便利なlombokのライブラリ
 @Controller // HTMLのパスを返すためのアノテーション
 @RequiredArgsConstructor // Lombokというライブラリがコンストラクタを自動生成している
 public class MediaViewController {
@@ -26,6 +28,9 @@ public class MediaViewController {
             model.addAttribute("wantList", mediaService.findByStatus("WANT"));
             // DBからStatusが "DONE" の作品を全部取ってきてリストに "doneList" というラベルを貼って箱に詰める
             model.addAttribute("doneList", mediaService.findByStatus("DONE"));
+
+            log.info("【デバッグ】Modelの中身すべて: {}", model.asMap());
+
             return "index"; // index.htmlを表示
         } catch (Exception e) {
             model.addAttribute("errorMessage", "データの読み込みに失敗しました。");

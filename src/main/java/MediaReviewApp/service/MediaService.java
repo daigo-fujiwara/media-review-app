@@ -9,11 +9,13 @@ import MediaReviewApp.service.client.TmdbService;
 import MediaReviewApp.service.client.iTunesService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j // ログを書くときに便利なlombokのライブラリ
 @Service
 @RequiredArgsConstructor // lombokというライブラリのおかげでコンストラクタを自分で書く必要がなくなる
 @Transactional // エラーが起きた時にデータの整合性を守る（ロールバック）
@@ -75,11 +77,14 @@ public class MediaService {
     // 予測候補
     public List<MediaCandidateDto> searchCandidates(String query, String type) {
 
+        log.info("【デバッグ】クエリ: {}、タイプ: {}", query, type);
+
         return switch (type) {
             case "MOVIE", "DRAMA" -> tmdbService.searchMovieDrama(query, type);
             case "BOOK" -> googleBooksService.searchBooks(query);
             case "MUSIC" -> iTunesService.searchMusic(query);
             case "GAME" -> rawgService.searchGames(query);
+            // どれにも当てはまらない文字列が来たらdefaultに引っかかり、0件の空リストを作って返す。
             default -> new ArrayList<>();
         };
     }
