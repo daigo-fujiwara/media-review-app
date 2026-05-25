@@ -186,7 +186,7 @@ class MediaServiceTest {
         when(mediaRepository.existsById(targetId)).thenReturn(false);
 
         // 2. 【実行 ＆ 検証】
-        // assertThrowsを使うことで、「この処理を動かしたら指定の例外が発生するよね？」という検証ができます
+        // assertThrowsを使うことで、「この処理を動かしたら指定の例外が発生する？」という検証
         RuntimeException exception = assertThrows(RuntimeException.class, () -> mediaService.delete(targetId));
 
         // 3. 【追加検証】発生したエラーメッセージの内容が正しいかもチェック
@@ -212,8 +212,9 @@ class MediaServiceTest {
     }
 
     @Test
-    @DisplayName("MOVIEを選択したらtmdbServiceが呼び出されるか")
+    @DisplayName("メディア種別に応じて正しい外部Serviceが呼び出されるか")
     void testSearchCandidates() {
+        // MOVIEのテスト
         assertNotNull(mediaService.searchCandidates("テスト", "MOVIE"));
         verify(tmdbService, times(1)).searchMovieDrama("テスト", "MOVIE");
 
@@ -235,6 +236,5 @@ class MediaServiceTest {
 
         // defaultルートのテスト
         assertTrue(mediaService.searchCandidates("テスト", "MANGA").isEmpty());
-
     }
 }
