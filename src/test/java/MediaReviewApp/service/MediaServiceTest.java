@@ -67,7 +67,7 @@ class MediaServiceTest {
     }
 
     @Test
-    @DisplayName("save時：MOVIEまたはDRAMAならtmdbServiceから画像URLを取得してセットできるか")
+    @DisplayName("save時：MOVIEならtmdbServiceから画像URLを取得してセットできるか")
     void testSave_MovieAndDrama_SetsImageUrl() {
         // 1. 【準備】MOVIEのEntityを用意
         Media movie = new Media();
