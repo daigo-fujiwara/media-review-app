@@ -46,6 +46,13 @@ public class MediaService {
         } else if ("GAME".equals(media.getType())) {
             media.setImageUrl(rawgService.fetchGameImageUrl(media.getTitle()));
         }
+        /*
+        "MOVIE"とダブルクォーテーションで囲んだ文字を書いた瞬間、
+        Javaは裏側new String("MOVIE")と書かれたときと同じように、
+        メモリ上にStringクラスのオブジェクトを自動的に作り出している。
+        つまり、見た目はただの文字列だが、実際はStringクラスのインスタンス。
+        そのため、インスタンスが持つ.equals()メソッドが問題なく呼び出せる。
+         */
 
         // JpaRepositoryインターフェースのメソッド。エンティティが新規の場合は挿入され、既存の場合は更新される。
         mediaRepository.save(media);
