@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ja">
 <head>
-    <th:block th:fragment="welcomeStyle">
+    <title>
+    </title>
+</head>
+<body>
+    <div th:fragment="welcomePopup" id="welcomeModalOverlay" class="welcome-overlay" style="display: none;">
         <style>
             .welcome-overlay {
                 position: fixed;
@@ -38,11 +42,6 @@
                 to { opacity: 1; transform: scale(1); }
             }
         </style>
-    </th:block>
-    <title></title>
-</head>
-<body>
-    <div th:fragment="welcomePopup" id="welcomeModalOverlay" class="welcome-overlay" style="display: none;">
         <div class="welcome-modal">
             <button type="button" class="btn-close welcome-close" id="closeWelcomeBtn" aria-label="Close"></button>
             <div class="text-center">
