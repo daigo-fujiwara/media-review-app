@@ -71,6 +71,7 @@ public class MediaService {
             case "MUSIC" -> iTunesService.searchMusic(query);
             case "GAME" -> rawgService.searchGames(query);
             // どれにも当てはまらない文字列が来たらdefaultに引っかかり、0件の空リストを作って返す。
+            // アロー構文 (->) を使うと、breakを書かなくてもフォールスルーが起きない。
             default -> new ArrayList<>();
         };
     }
