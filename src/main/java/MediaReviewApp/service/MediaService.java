@@ -53,6 +53,11 @@ public class MediaService {
         つまり、見た目はただの文字列だが、実際はStringクラスのインスタンス。
         そのため、インスタンスが持つ.equals()メソッドが問題なく呼び出せる。
          */
+        /*
+        if ("MOVIE".equals(media.getType()) || "DRAMA".equals(media.getType()))のテストについて：
+        MOVIEのテストだけでは短絡評価により右側のDRAMA判定がスキップされる。（OR演算子のため左側がTrueの時点でif文がTrueになるから）
+        分岐網羅（C1）100%を達成するためには、MOVIEとDRAMAの両方のテストケースが必要。（条件網羅（C2）ではなく）
+         */
 
         // JpaRepositoryインターフェースのメソッド。エンティティが新規の場合は挿入され、既存の場合は更新される。
         mediaRepository.save(media);

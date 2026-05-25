@@ -1,8 +1,7 @@
 package MediaReviewApp.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +67,103 @@ class MediaServiceTest {
     }
 
     @Test
+    @DisplayName("save時：MOVIEまたはDRAMAならtmdbServiceから画像URLを取得してセットできるか")
+    void testSave_MovieAndDrama_SetsImageUrl() {
+        // 1. 【準備】MOVIEのEntityを用意
+        Media movie = new Media();
+        movie.setTitle("テスト映画");
+        movie.setType("MOVIE");
+
+        // tmdbServiceが呼ばれたら、モックのURLを返すように設定
+        when(tmdbService.fetchPosterUrl("テスト映画", "MOVIE")).thenReturn("https://tmdb.com/poster.jpg");
+
+        // 2. 【実行】
+        mediaService.save(movie);
+
+        // 3. 【検証】画像がセットされ、Repositoryのsaveが呼ばれたこと
+        assertEquals("https://tmdb.com/poster.jpg", movie.getImageUrl());
+        verify(tmdbService, times(1)).fetchPosterUrl("テスト映画", "MOVIE");
+        verify(mediaRepository, times(1)).save(movie);
+    }
+
+    @Test
+    @DisplayName("save時：DRAMAならtmdbServiceから画像URLを取得してセットできるか")
+    void testSave_Drama_SetsImageUrl() {
+        // 1. 【準備】DRAMAのEntityを用意
+        Media drama = new Media();
+        drama.setTitle("テストドラマ");
+        drama.setType("DRAMA");
+
+        // DRAMAのときも tmdbService が呼ばれる設定にする
+        when(tmdbService.fetchPosterUrl("テストドラマ", "DRAMA")).thenReturn("https://tmdb.com/drama_poster.jpg");
+
+        // 2. 【実行】
+        mediaService.save(drama);
+
+        // 3. 【検証】
+        assertEquals("https://tmdb.com/drama_poster.jpg", drama.getImageUrl());
+        verify(tmdbService, times(1)).fetchPosterUrl("テストドラマ", "DRAMA");
+        verify(mediaRepository, times(1)).save(drama);
+    }
+
+    @Test
+    @DisplayName("save時：BOOKならgoogleBooksServiceから画像URLを取得してセットできるか")
+    void testSave_Book_SetsImageUrl() {
+        // 1. 【準備】BOOKのEntityを用意
+        Media book = new Media();
+        book.setTitle("テスト本");
+        book.setType("BOOK");
+
+        when(googleBooksService.fetchThumbnailUrl("テスト本")).thenReturn("https://books.com/thumb.jpg");
+
+        // 2. 【実行】
+        mediaService.save(book);
+
+        // 3. 【検証】
+        assertEquals("https://books.com/thumb.jpg", book.getImageUrl());
+        verify(googleBooksService, times(1)).fetchThumbnailUrl("テスト本");
+        verify(mediaRepository, times(1)).save(book);
+    }
+
+    @Test
+    @DisplayName("save時：MUSICならiTunesServiceから画像URLを取得してセットできるか")
+    void testSave_Music_SetsImageUrl() {
+        // 1. 【準備】MUSICのEntityを用意
+        Media music = new Media();
+        music.setTitle("テスト曲");
+        music.setType("MUSIC");
+
+        when(iTunesService.fetchAlbumArtUrl("テスト曲")).thenReturn("https://itunes.com/art.jpg");
+
+        // 2. 【実行】
+        mediaService.save(music);
+
+        // 3. 【検証】
+        assertEquals("https://itunes.com/art.jpg", music.getImageUrl());
+        verify(iTunesService, times(1)).fetchAlbumArtUrl("テスト曲");
+        verify(mediaRepository, times(1)).save(music);
+    }
+
+    @Test
+    @DisplayName("save時：GAMEならrawgServiceから画像URLを取得してセットできるか")
+    void testSave_Game_SetsImageUrl() {
+        // 1. 【準備】GAMEのEntityを用意
+        Media game = new Media();
+        game.setTitle("テストゲーム");
+        game.setType("GAME");
+
+        when(rawgService.fetchGameImageUrl("テストゲーム")).thenReturn("https://rawg.com/game.jpg");
+
+        // 2. 【実行】
+        mediaService.save(game);
+
+        // 3. 【検証】
+        assertEquals("https://rawg.com/game.jpg", game.getImageUrl());
+        verify(rawgService, times(1)).fetchGameImageUrl("テストゲーム");
+        verify(mediaRepository, times(1)).save(game);
+    }
+
+    @Test
     @DisplayName("Mediaを保存できるか")
     void testSave() {
         // 1. 準備
@@ -79,6 +175,26 @@ class MediaServiceTest {
 
         // 3. 検証：mediaRepository.save() が、この media を引数に1回呼ばれたか？
         verify(mediaRepository, times(1)).save(media);
+    }
+
+    @Test
+    @DisplayName("delete時：データが存在しない場合、狙い通りの例外（エラー）が発生するか")
+    void testDelete_ThrowsException_WhenDataDoesNotExist() {
+        Long targetId = 999L;
+
+        // 1. 【準備】リポジトリに「データは存在しない（false）」と嘘の設定をする
+        when(mediaRepository.existsById(targetId)).thenReturn(false);
+
+        // 2. 【実行 ＆ 検証】
+        // assertThrowsを使うことで、「この処理を動かしたら指定の例外が発生するよね？」という検証ができます
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> mediaService.delete(targetId));
+
+        // 3. 【追加検証】発生したエラーメッセージの内容が正しいかもチェック
+        assertEquals("削除しようとしたデータが存在しません。ID: 999", exception.getMessage());
+
+        // 4. 【追加検証】データがないので、削除メソッド（deleteById）は一度も【呼ばれていない】ことを証明する
+        verify(mediaRepository, times(1)).existsById(targetId);
+        verify(mediaRepository, never()).deleteById(targetId); // never() で「0回」を検証！
     }
 
     @Test
