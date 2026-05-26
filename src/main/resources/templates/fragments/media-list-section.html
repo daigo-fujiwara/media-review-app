@@ -3,6 +3,8 @@
 <body>
 
 <div th:fragment="mediaList" class="row tab-content" id="mediaTabContent">
+
+    <!-- スマホ専用のタブ切り替え表示 -->
     <div class="col-12 d-md-none mb-3">
         <ul class="nav nav-pills nav-justified bg-secondary p-1 rounded-pill" id="mediaTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -14,19 +16,20 @@
         </ul>
     </div>
 
+    <!-- 気になるリストの箱　-->
     <div class="tab-pane show active col-12 col-md-6 d-md-block mb-4" id="want-panel" role="tabpanel" aria-labelledby="want-tab">
         <div class="media-column">
             <h4 class="text-secondary">気になるリスト</h4>
-                <div th:each="item : ${wantList}" class="card bg-dark text-white border border-secondary shadow-sm mb-3">
-                    <div class="card-body media-card-body">
-                        <div class="poster-container">
-                            <img th:if="${item.imageUrl != null}"
-                                 th:src="${item.imageUrl}"
-                                 class="media-poster poster-portrait poster-square"
-                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
-                                 th:alt="${item.title}">
-                            <div th:unless="${item.imageUrl != null}"
-                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
+            <div th:each="item : ${wantList}" class="card bg-dark text-white border border-secondary shadow-sm mb-3">
+                <div class="card-body media-card-body">
+                    <div class="poster-container">
+                        <img th:if="${item.imageUrl != null}"
+                             th:src="${item.imageUrl}"
+                             class="media-poster poster-portrait poster-square"
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
+                             th:alt="${item.title}">
+                        <div th:unless="${item.imageUrl != null}"
+                             th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
                             <span class="text-muted" style="font-size: 10px;">No Image</span>
                         </div>
                     </div>
@@ -49,8 +52,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
-
+                </div> <!-- カードの中身 -->
                 <div class="modal fade" th:id="'reviewModal' + ${item.id}" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -92,7 +94,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> <!-- レビューモーダルの中身 -->
             </div>
         </div>
     </div>
