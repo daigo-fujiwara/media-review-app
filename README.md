@@ -43,16 +43,16 @@
 ※ローカルPCで実行する場合、devの設定を使うように「実行構成の編集」をする。
 
 ## 外部API連携
-1. Google Books API
+1. TMDB (The Movie Database) API
+    - 用途: ジャンル MOVIE および DRAMA のポスター画像取得
+    - 認証: APIキー方式 (v3)
+    - 環境変数: TMDB_API_KEY
+    - ドキュメント: [TMDB API Documentation](https://developer.themoviedb.org/docs/getting-started)
+2. Google Books API
    - 用途: ジャンル BOOK の書籍画像（サムネイル）取得 
    - 認証: APIキー方式 
    - 環境変数: GOOGLE_BOOKS_API_KEY
    - ドキュメント: [Google Books APIs](https://developers.google.com/books)
-2. TMDB (The Movie Database) API
-   - 用途: ジャンル MOVIE および DRAMA のポスター画像取得 
-   - 認証: APIキー方式 (v3)
-   - 環境変数: TMDB_API_KEY
-   - ドキュメント: [TMDB API Documentation](https://developer.themoviedb.org/docs/getting-started)
 3. iTunes API
    - 用途: 指定したキーワード（曲名、アーティスト名、アルバム名）に関連するジャケット画像（アートワーク）、視聴URL、メタデータを取得
    - 認証: 不要

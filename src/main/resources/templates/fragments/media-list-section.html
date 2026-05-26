@@ -13,31 +13,33 @@
             </li>
         </ul>
     </div>
+
     <div class="tab-pane show active col-12 col-md-6 d-md-block mb-4" id="want-panel" role="tabpanel" aria-labelledby="want-tab">
         <div class="media-column">
             <h4 class="text-secondary">気になるリスト</h4>
-            <div th:each="item : ${wantList}" class="card bg-dark text-white border border-secondary shadow-sm mb-3">
-                <div class="card-body media-card-body"> <div class="poster-container">
-                    <img th:if="${item.imageUrl != null}"
-                         th:src="${item.imageUrl}"
-                         class="media-poster poster-portrait poster-square"
-                         th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
-                         th:alt="${item.title}">
-                    <div th:unless="${item.imageUrl != null}"
-                         th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
-                        <span class="text-muted" style="font-size: 10px;">No Image</span>
+                <div th:each="item : ${wantList}" class="card bg-dark text-white border border-secondary shadow-sm mb-3">
+                    <div class="card-body media-card-body">
+                        <div class="poster-container">
+                            <img th:if="${item.imageUrl != null}"
+                                 th:src="${item.imageUrl}"
+                                 class="media-poster poster-portrait poster-square"
+                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square' : 'media-poster poster-portrait'"
+                                 th:alt="${item.title}">
+                            <div th:unless="${item.imageUrl != null}"
+                                 th:class="${item.type == 'GAME' or item.type == 'MUSIC'} ? 'media-poster poster-square d-flex...' : 'media-poster poster-portrait d-flex...'">
+                            <span class="text-muted" style="font-size: 10px;">No Image</span>
+                        </div>
                     </div>
-                </div>
 
                     <div class="content-container">
-                            <span class="badge border border-light text-light">
-                                <i th:if="${item.type == 'MOVIE'}" class="bi bi-film me-1"></i>
-                                <i th:if="${item.type == 'DRAMA'}" class="bi bi-masks me-1"></i>
-                                <i th:if="${item.type == 'BOOK'}" class="bi bi-book me-1"></i>
-                                <i th:if="${item.type == 'MUSIC'}" class="bi bi-music-note-beamed me-1"></i>
-                                <i th:if="${item.type == 'GAME'}" class="bi bi-controller me-1"></i>
-                                <span th:text="${item.type}">TYPE</span>
-                            </span>
+                        <span class="badge border border-light text-light">
+                            <i th:if="${item.type == 'MOVIE'}" class="bi bi-film me-1"></i>
+                            <i th:if="${item.type == 'DRAMA'}" class="bi bi-tv me-1"></i>
+                            <i th:if="${item.type == 'BOOK'}" class="bi bi-book me-1"></i>
+                            <i th:if="${item.type == 'MUSIC'}" class="bi bi-music-note-beamed me-1"></i>
+                            <i th:if="${item.type == 'GAME'}" class="bi bi-controller me-1"></i>
+                            <span th:text="${item.type}">TYPE</span>
+                        </span>
                         <h5 class="card-title mt-1 mb-1" th:text="${item.title}" style="font-size: 1.1rem;">タイトル</h5>
                         <div class="mt-2 d-flex gap-2">
                             <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" th:data-bs-target="'#reviewModal' + ${item.id}">完了！</button>
@@ -94,6 +96,7 @@
             </div>
         </div>
     </div>
+
     <div class="tab-pane show col-12 col-md-6 d-md-block" id="done-panel" role="tabpanel" aria-labelledby="done-tab">
         <div class="media-column">
             <h4 class="text-success">レビュー</h4>
@@ -113,7 +116,7 @@
                     <div class="content-container">
                             <span class="badge border border-light text-light">
                                 <i th:if="${item.type == 'MOVIE'}" class="bi bi-film me-1"></i>
-                                <i th:if="${item.type == 'DRAMA'}" class="bi bi-masks me-1"></i>
+                                <i th:if="${item.type == 'DRAMA'}" class="bi bi-tv me-1"></i>
                                 <i th:if="${item.type == 'BOOK'}" class="bi bi-book me-1"></i>
                                 <i th:if="${item.type == 'MUSIC'}" class="bi bi-music-note-beamed me-1"></i>
                                 <i th:if="${item.type == 'GAME'}" class="bi bi-controller me-1"></i>
