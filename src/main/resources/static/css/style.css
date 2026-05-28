@@ -1,12 +1,49 @@
-.media-column {
-    background: #f8f9fa; /* 薄いグレー */
-    border-radius: 8px;   /* 角を丸く */
-    padding: 15px;        /* 中の余白 */
-    min-height: 400px;    /* 最低限の高さ */
+/* ========================================================= */
+/* 🌌 メディアレビューアプリ：style.css（重複・エラー修正版） */
+/* ========================================================= */
+
+body {
+    background-color: #0b111e !important; /* 深宇宙のような超ダークブルー */
+    /* 背景に近未来感を出すためのボカシ玉（グラデーション）を2つ配置 */
+    background-image:
+            radial-gradient(at 10% 20%, rgba(0, 198, 255, 0.08) 0px, transparent 50%),
+            radial-gradient(at 90% 80%, rgba(13, 202, 240, 0.08) 0px, transparent 50%) !important;
+    background-attachment: fixed;
+    color: #e2e8f0;
 }
 
-.card { margin-bottom: 10px; }
-#reviewFields { display: none; }
+/* アプリ全体のタイトル（ネオン発光） */
+h1, .h1 {
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(13, 202, 240, 0.6), 0 0 20px rgba(13, 202, 240, 0.3);
+    letter-spacing: 2px;
+}
+
+.card.bg-secondary {
+    background: rgba(20, 30, 48, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+}
+
+/* 左右の部屋（下の箱）のスタイルを設定 */
+/* ※重複していたライトグレー（#f8f9fa）の設定を削除し、大悟さんの指定した色とサイズに一本化しました */
+.media-column {
+    background-color: #1e293b !important;
+    border: 2px solid #38bdf8 !important;
+    border-radius: 8px !important;   /* 角を丸く */
+    padding: 15px !important;        /* 中の余白 */
+    min-height: 400px !important;    /* 最低限の高さ */
+}
+
+.card {
+    margin-bottom: 10px;
+}
+
+#reviewFields {
+    display: none;
+}
 
 .media-card-body {
     display: flex; /* 横並びにする */
@@ -49,4 +86,55 @@
 .nav-pills#mediaTab .nav-link:not(.active) {
     color: #f8f9fa !important;
     background: transparent !important;
+}
+
+/* 魔法のグラデーションボタン */
+.btn-custom {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    border: none;
+    border-radius: 50px; /* 丸みを持たせる */
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    transform: translateY(-2px); /* マウスを載せると少し浮き上がる */
+    box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+}
+
+/* 6. スマホ用切り替えタブのネオン装飾 */
+.nav-pills#mediaTab .nav-link.active {
+    background-color: #0dcaf0 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 15px #0dcaf0 !important;
+}
+.nav-pills#mediaTab .nav-link:not(.active) {
+    color: #f8f9fa !important;
+    background: transparent !important;
+}
+
+/* 7. レビュー入力モーダルの視認性改善（文字の同化を防ぐ） */
+.modal-content {
+    background-color: #1e293b !important;
+    border: 2px solid #38bdf8 !important;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.4) !important;
+}
+.modal-header, .modal-footer {
+    border-color: #334155 !important;
+}
+.modal-title, .modal-title span, .modal-body .form-label {
+    color: #38bdf8 !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+.modal-body {
+    color: #f1f5f9 !important;
+}
+.modal-footer .btn-secondary {
+    background-color: #475569 !important;
+    border: none !important;
+    border-radius: 50px !important;
+}
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%) !important;
 }
