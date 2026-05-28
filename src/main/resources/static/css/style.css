@@ -19,6 +19,8 @@ h1, .h1 {
     backdrop-filter: blur(12px) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 16px !important;
+    position: relative;
+    z-index: 10;
 }
 
 .media-column {
