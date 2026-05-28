@@ -6,7 +6,7 @@
     <form th:action="@{/save}" method="post" class="row g-3 align-items-end"
           onsubmit="this.querySelector('button[type=submit]').disabled=true;">
 
-        <div class="col-md-4">
+        <div class="col-md-2">
             <label for="statusSelect" class="form-label text-light">ステータス</label>
             <select name="status" id="statusSelect" class="form-select">
                 <option value="WANT">気になるリスト</option>
@@ -14,7 +14,7 @@
             </select>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-2">
             <label for="typeSelect" class="form-label text-light">タイプ</label>
             <select id="typeSelect" name="type" class="form-select">
                 <option value="MOVIE">映画</option>
@@ -25,7 +25,7 @@
             </select>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-8">
             <label for="titleInput" class="form-label text-light">タイトル</label>
             <input type="text" id="titleInput" name="title" class="form-control" placeholder="タイトルを入力" required>
             <div id="suggestionList" class="list-group position-absolute w-100 shadow" style="z-index: 1000; display: none;"></div>
@@ -51,8 +51,8 @@
             </div>
         </div>
 
-        <div class="col-12 mt-3">
-            <button type="submit" class="btn btn-info text-dark fw-bold w-100">追加する</button>
+        <div class="text-end mt-3">
+            <button type="submit" class="btn btn-custom px-4 py-2 fw-bold">追加する</button>
         </div>
     </form>
 </div>
